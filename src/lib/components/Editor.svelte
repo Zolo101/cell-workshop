@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { rules } from "$lib";
     import { onMount } from "svelte";
     import type { RGBA } from "$lib/render/webgpu";
     import { palette } from "$lib/constants.js";
-    import { get } from "svelte/store";
 
-    let code = $state("");
+    let { code = $bindable() }: {code: string} = $props();
 
     const paletteToRGBA = (palette: RGBA) => `rgba(${palette[0]}, ${palette[1]}, ${palette[2]}, 0.25)`;
     let settings = {
@@ -16,7 +14,7 @@
     const styles: Record<string, Partial<CSSStyleDeclaration>> = {
         "markov": {color: "#ffffff", fontWeight: "bold", position: "relative", top: "-1px"},
         "sequence": {color: "#ff7b00", fontWeight: "bold", position: "relative", top: "-1px"},
-        "one": {color: "white"},//, fontWeight: "bold"},
+        "one": {color: "#b3b3b3"},//, fontWeight: "bold"},
         "all": {color: "cyan"},//, fontWeight: "bold"},
         "B": {backgroundColor: paletteToRGBA(palette[0])},
         "I": {backgroundColor: paletteToRGBA(palette[1])},
@@ -47,7 +45,7 @@
     // TODO: I don't like regex, how performant is this?
     const camelToKebab = (str: string) => str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 
-    const parseCSSStyleDeclaration = (declaration: CSSStyleDeclaration) => {
+    const parseCSSStyleDeclaration = (declaration: Partial<CSSStyleDeclaration>) => {
         let str = "";
         for (const [key, value] of Object.entries(declaration)) {
             str += `${camelToKebab(key)}: ${value};`
@@ -175,7 +173,6 @@
         const tokens = tokenizeParts(parts);
 
         // console.log(parts, tokens)
-        rules.set(code)
 
         return tokens;
     }
@@ -243,20 +240,28 @@
 
     onMount(() => {
         code = localStorage.getItem("model") ?? "(B=W)"
+        resize();
     })
+
+    const resize = () => {
+        // Unfortunately because of textarea being absolute, I think this is the only way to get the width to match.
+        const textarea = document.querySelector<HTMLTextAreaElement>("#ta")!;
+        const pre = document.querySelector<HTMLPreElement>("#c")!;
+
+        textarea.style.width = `${pre.clientWidth}px`;
+    }
+
+    window.addEventListener("resize", resize)
 </script>
 
-<div class="bg-neutral-800">
-    <textarea bind:value={code}></textarea>
-<!--    TODO: IDK why I need to use inline-table for this... -->
-    <pre><code class="inline-table">
-            {#each tokens as token}
-                <span style={parseCSSStyleDeclaration(styles[token.type])}>{token.value}</span>
-                {#if token.break}
-                    <br>
-                {/if}
-            {/each}
-    </code></pre>
+{#snippet token(t)}
+    {@const css = parseCSSStyleDeclaration(styles[t.type])}
+    <span style={css}>{t.value}</span><!--{#if t.break}<br>{/if}-->
+{/snippet}
+
+<div class="bg-neutral-800 w-full pb-5">
+    <textarea id="ta" bind:value={code}></textarea>
+    <pre id="c"><code class="whitespace-pre">{#each tokens as t}{@render token(t)}{/each}</code></pre>
     <!--{#await codeAI}-->
     <!--{:then codeAI}-->
     <!--    <p class="absolute font-mono opacity-50">{codeAI}</p>-->
@@ -265,13 +270,13 @@
 
 <style>
     textarea {
-        @apply w-full h-20 font-mono absolute text-transparent bg-transparent caret-white border-none shadow-none overflow-auto outline-none p-0 m-0;
+        @apply h-1/2 absolute resize-none text-transparent bg-transparent caret-white border-none shadow-none overflow-auto outline-none p-0 m-0;
     }
     pre {
-        @apply font-mono text-neutral-200 whitespace-normal;
+        @apply text-neutral-200 whitespace-normal;
     }
 
     textarea, pre {
-        @apply p-2;
+        @apply font-mono p-2;
     }
 </style>

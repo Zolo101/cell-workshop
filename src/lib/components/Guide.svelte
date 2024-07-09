@@ -1,11 +1,12 @@
 <script lang="ts">
     import RuleComponent from "$lib/components/RuleComponent.svelte";
     import PatternComponent from "$lib/components/PatternComponent.svelte";
+    import ExampleRuleComponent from "$lib/components/ExampleRuleComponent.svelte";
 </script>
 
 {#snippet rule(model, color)}
     <div class="inline-block bg-{color}-900/40 outline outline-1 outline-{color}-500 rounded p-2 m-4">
-        <RuleComponent {model} rule={null}/>
+        <ExampleRuleComponent {model}/>
     </div>
 {/snippet}
 

@@ -1,7 +1,9 @@
 <script lang="ts">
-    import { height, init, width } from "$lib";
+    import { width, height } from "$lib/index.svelte";
     import { onMount } from "svelte";
     import WebGPURenderer from "$lib/render/webgpu";
+
+    let { init }: { init: (renderer: WebGPURenderer) => void } = $props();
 
     let canvas: HTMLCanvasElement;
     let supportsWebGPU = $state(true);

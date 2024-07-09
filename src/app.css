@@ -43,12 +43,11 @@ a:hover {
 }
 
 input, select {
-    @apply bg-neutral-800/90 outline outline-1 outline-neutral-400;
+    @apply bg-neutral-800/90 p-0.5;
 }
 
-/* TODO: Merge */
-input, select {
-    @apply p-0.5
+input:invalid {
+    @apply bg-red-500/50;
 }
 
 /*code {*/

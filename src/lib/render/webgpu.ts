@@ -7,14 +7,14 @@ export default class WebGPURenderer {
     private readonly context: GPUCanvasContext
     private readonly device: GPUDevice
 
-    private readonly tiles: Uint8ClampedArray
-    private readonly screen: GPUTexture
+    private tiles: Uint8ClampedArray
+    private screen: GPUTexture
     private readonly colours: GPUTexture // TODO: Does it have to be a texture?
     private readonly renderPassDescriptor: GPURenderPassDescriptor
 
     private readonly module: GPUShaderModule
     private readonly pipeline: GPURenderPipeline
-    private readonly bindGroup: GPUBindGroup
+    private bindGroup: GPUBindGroup
 
     constructor(width: number, height: number, context: GPUCanvasContext, device: GPUDevice) {
         this.width = width
@@ -84,6 +84,28 @@ export default class WebGPURenderer {
 
     private createColourTexture() {
         return new Uint8ClampedArray(4 * 256)
+    }
+
+    resize(width: number, height: number) {
+        this.width = width
+        this.height = height
+        this.tiles = new Uint8ClampedArray(this.width * this.height)
+        this.screen = this.device.createTexture({
+            label: "screen",
+            size: [this.width, this.height],
+            format: "r8unorm",
+            usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST
+        })
+
+        this.bindGroup = this.device.createBindGroup({
+            layout: this.pipeline.getBindGroupLayout(0),
+            entries: [
+                {binding: 0, resource: this.device.createSampler()},
+                {binding: 1, resource: this.screen.createView()},
+                {binding: 2, resource: this.colours.createView()},
+            ]
+        });
+        this.render()
     }
 
     updateColours(colours: RGBA[]) {

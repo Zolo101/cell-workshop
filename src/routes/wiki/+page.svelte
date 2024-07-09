@@ -1,7 +1,9 @@
 <script lang="ts">
     import { groupSections, parseRaw } from "$lib/wiki";
-    import indexRaw from "$lib/index.ts?raw";
+    import indexRaw from "$lib/index.svelte.ts?raw";
     import RuleComponent from "$lib/components/RuleComponent.svelte";
+    import { parseRules } from "$lib/parse";
+    import ExampleRuleComponent from "$lib/components/ExampleRuleComponent.svelte";
 
     const sections = parseRaw(indexRaw)
     const groups = Object.entries(groupSections(sections))
@@ -50,7 +52,7 @@
                             <p class="text-neutral-300">{section.description}</p>
                             {#if section.example}
                                 <div class="inline-block bg-gray-950/20 outline outline-1 outline-gray-400 rounded p-2 m-2">
-                                    <RuleComponent model={section.example} rule={null}/>
+                                    <ExampleRuleComponent model={section.example}/>
                                     <p class="text-xs opacity-25">example</p>
                                 </div>
                             {/if}

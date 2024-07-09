@@ -1,4 +1,4 @@
-import { type Pattern, type Rule, type ValidPattern } from "$lib/index";
+import { type Pattern, type Rule, type ValidPattern } from "$lib/index.svelte";
 import { paletteAlias } from "$lib/constants";
 
 const isValidPatternString = (pattern: string) => {
