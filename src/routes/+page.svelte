@@ -14,7 +14,6 @@
     import Guide from "$lib/components/Guide.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import { lexModel, parseRules, parseRulesFromTokens } from "$lib/parse";
-    import { writable } from "svelte/store";
     import type WebGPURenderer from "$lib/render/webgpu";
     import { palette, paletteAlias } from "$lib/constants";
     import { selectWihGrid, selectWithCell, selectWithSequence } from "$lib/cpu/select";
@@ -23,7 +22,12 @@
     // TODO: (Reminder) Uint8Array is 0 to 255, so you cannot use them for board indexes
     // TODO: (Reminder) Uint16Array is 0 to 65535, which is suitable for up to 256x256 boards. After that, we need to use Uint32Array
 
-    // TODO: Figure out why TF /wiki needs localStorage??
+    // (
+    // BB/BB=WW/WW B>A
+    //     [
+    //     A/W=W/A *A/WA=*W/A* A*/AW=W*/*A
+    // ]
+    // )
     // [BBB=RRR RRR>RGR *G*/**G=RGR/RGR *G*/G**=RGR/RGR GG=RG GB=GR RB=RR BR=RR]
     // [B/*>O/* O/*/*>W/*/* (BW>BB W/W/W/W/W/W/W=*/*/*/B/*/*/*) OOOOOOOO/BBBBBBBB=***B****/******** (OW>*O OO/OB>*B/** OOOO/BBBB/OOOO=**B*/****/**** WW/BB/OB=*O/**/**)]
     // (*BB/WBB/*BB>***/GW*/*G* BBGGBB>GGBBGG)
@@ -45,10 +49,7 @@
     // let interval = derived(intervalInput, (v) => v * 16)
     // let intervalSys = 16
     let interval = 16
-
-    const b = $state(5);
-
-    let playing = $state(true)
+    let playing = $state(false)
 
     let renderer: WebGPURenderer;
     // TODO: It's not 1 step, change this to a better name
@@ -255,7 +256,7 @@
         <section class="flex justify-center gap-2 font-bold text-neutral-300 *:grow *:bg-neutral-800/40 *:px-2 *:py-1">
             <div>
                 <span>Size:</span>
-<!--                TODO: 512 is arbitrary, increase it in the future -->
+<!--                TODO: 256 is arbitrary, increase it in the future -->
                 <input required min="1" max="256" class="w-12 text-blue-500 font-black text-center" bind:value={s_width}>
                 <span>X</span>
                 <input required min="1" max="256" class="w-12 text-pink-500 font-black text-center" bind:value={s_height}>
@@ -274,14 +275,14 @@
                 <span class="mr-2">Display Mode:</span>
                 <select>
                     <option>2D</option>
-                    <option disabled>3D</option>
+                    <option disabled>3D (WebGPU, planned)</option>
                 </select>
             </div>
             <div>
                 <span class="mr-2">Compute On:</span>
                 <select>
                     <option>CPU</option>
-                    <option disabled>GPU</option>
+                    <option disabled>GPU (WebGPU, planned)</option>
                 </select>
             </div>
         </section>
@@ -300,12 +301,12 @@
 	<section class="mx-2 *:p-2 *:mb-2">
         <section class="bg-cyan-950/80">
             <Editor bind:code={rules}/>
-            <p class="text-xs text-right text-cyan-400 pt-2">Check out this <a>short guide</a> on how text rules work.</p>
+            <p class="text-xs text-right text-cyan-400 pt-2">Check out this <a onclick={() => dialog.show()} role="button">short guide</a> on how text rules work.</p>
             {#if !model.ok}
                 <p class="text-cyan-500 text-xs">{model.failReason}</p>
             {/if}
         </section>
-        <section class="bg-neutral-800/30 overflow-x-auto">
+        <section class="relative bg-neutral-800/30 overflow-x-auto z-10">
             {#if model.ok}
                 {#each model.rules as rule}
                     <RuleComponent {rule}/>
