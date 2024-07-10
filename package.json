@@ -21,7 +21,7 @@
     "@storybook/svelte": "8.2.0-alpha.10",
     "@storybook/sveltekit": "8.2.0-alpha.10",
     "@storybook/test": "8.2.0-alpha.10",
-    "@sveltejs/adapter-auto": "^3.0.0",
+    "@sveltejs/adapter-static": "^3.0.2",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "@webgpu/types": "^0.1.43",
