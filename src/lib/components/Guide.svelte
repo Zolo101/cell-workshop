@@ -1,5 +1,4 @@
 <script lang="ts">
-    import RuleComponent from "$lib/components/RuleComponent.svelte";
     import PatternComponent from "$lib/components/PatternComponent.svelte";
     import ExampleRuleComponent from "$lib/components/ExampleRuleComponent.svelte";
 </script>
@@ -11,11 +10,14 @@
 {/snippet}
 
 <div class="w-2/3 h-4/5 overflow-auto text-sm text-neutral-200 bg-zinc-900 outline outline-1 outline-neutral-400 p-5">
+    <form method="dialog" class="float-right">
+        <button>Close</button>
+    </form>
     <h1>Welcome to <i>Collapsibles!</i></h1>
     <p class="text-center mb-2">Algorithms are created from rules, and rules are created from two patterns, an input and output. Each step, the rule's input pattern will look at the screen and collect all regions that match the pattern. It will then replace that region with the output pattern.</p>
     <p>The "Markov" algorithm will attempt to run each rule until one succeeds, skipping the rest.</p>
     <hr>
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center *:w-full *:flex *:*:grow *:*:h-5">
         <PatternComponent accessibility pattern={{type: "Sequence", select: ["B", "I", "P", "E", "N", "D", "A", "W", "R", "O", "Y", "G", "U", "S", "K", "F", "*"]}}/>
     </div>
     <hr>
@@ -53,52 +55,15 @@
             <p>Slowly replace each black pixel to white, and once there are none left, turn the screen red!</p>
         </div>
     </div>
-    <p class="text-center">For more info, check out the <a href="/wiki">wiki!</a> You can also click on text in any rule visualiser</p>
-<!--    <h1>Advanced Features</h1>-->
-<!--    <h2>Markov & Sequence</h2>-->
-<!--    <table class="w-full">-->
-<!--        <thead>-->
-<!--            <tr>-->
-<!--                <th>Type</th>-->
-<!--                <th>Description</th>-->
-<!--                <th>Notation</th>-->
-<!--            </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--            <tr>-->
-<!--                <td>Markov</td>-->
-<!--                <td>Will attempt to run each rule until one succeeds, skipping the rest.</td>-->
-<!--                <td>()</td>-->
-<!--            </tr>-->
-<!--            <tr>-->
-<!--                <td>Sequence</td>-->
-<!--                <td>Will attempt to run each rule regardless if it succeeds or not.</td>-->
-<!--                <td>[]</td>-->
-<!--            </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--    <h2>All vs One</h2>-->
-<!--    <table class="w-full">-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--            <th>Type</th>-->
-<!--            <th>Description</th>-->
-<!--            <th>Notation</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
-<!--        <tr>-->
-<!--            <td>All</td>-->
-<!--            <td>Will replace all found regions that match.</td>-->
-<!--            <td>></td>-->
-<!--        </tr>-->
-<!--        <tr>-->
-<!--            <td>One</td>-->
-<!--            <td>Will pick a randomly found region that matches.</td>-->
-<!--            <td>=</td>-->
-<!--        </tr>-->
-<!--        </tbody>-->
-<!--    </table>-->
+    <hr>
+    <h2>Sequences</h2>
+    <p>If you want to have rules run independent of them being successful, use sequences!</p>
+    <div class="grid grid-cols-1">
+        {@render rule("[B=W B=U]", "amber")}
+        <p>Replaces black with white and blue</p>
+    </div>
+    <hr>
+    <p class="text-center">For more info, check out the <a href="/wiki">wiki!</a> You can also click on text in any rule visualiser for more information.</p>
     <form method="dialog" class="flex justify-center m-2">
         <button>Let's Start!</button>
     </form>

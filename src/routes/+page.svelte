@@ -242,13 +242,15 @@
         newBoard(s_width, s_height)
         renderer?.resize(s_width, s_height)
     })
+
+    let dialog: HTMLDialogElement;
 </script>
 
-<div class="flex w-full *:w-1/2 gap-2 p-5">
-<!--    <dialog open class="w-full h-full bg-neutral-600/50 backdrop-blur-xs">-->
-<!--    <dialog class="invisible absolute top-0 flex justify-center items-center z-10 w-full h-full bg-neutral-900/80">-->
-<!--        <Guide/>-->
-<!--    </dialog>-->
+<!--<dialog open class="w-full h-full bg-neutral-600/50 backdrop-blur-xs">-->
+<dialog bind:this={dialog} class="z-20 absolute top-0 flex justify-center items-center w-full h-full bg-neutral-900/80">
+    <Guide/>
+</dialog>
+<div class="flex max-md:flex-col w-full md:*:w-1/2 gap-2 p-5">
 	<section>
         <section class="flex justify-center gap-2 font-bold text-neutral-300 *:grow *:bg-neutral-800/40 *:px-2 *:py-1">
             <div>

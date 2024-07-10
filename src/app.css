@@ -50,6 +50,10 @@ input:invalid {
     @apply bg-red-500/50;
 }
 
+dialog:not([open]){
+    display:none;
+}
+
 /*code {*/
     /*@apply text-lg font-black bg-neutral-900/80 outline-dashed outline-1 rounded px-2 py-1 m-1;*/
 /*}*/
