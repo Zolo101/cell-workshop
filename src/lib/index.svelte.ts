@@ -1,6 +1,6 @@
 import type { paletteAlias } from "$lib/constants";
-import type WebGPURenderer from "$lib/render/webgpu/webgpu";
-import type WebGL2Renderer from "$lib/render/webgl2/webgl2";
+import type WebGPURenderer from "$lib/render/webgpu";
+import type WebGL2Renderer from "$lib/render/webgl2";
 
 export let width = 64
 export let height = 64

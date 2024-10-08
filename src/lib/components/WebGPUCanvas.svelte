@@ -1,7 +1,7 @@
 <script lang="ts">
     import { width, height } from "$lib/index.svelte";
     import { onMount } from "svelte";
-    import WebGPURenderer from "$lib/render/webgpu/webgpu";
+    import WebGPURenderer from "$lib/render/webgpu";
 
     let { init }: { init: (renderer: WebGPURenderer) => void } = $props();
 

@@ -1,6 +1,6 @@
 <script lang="ts">
     import { height, width } from "$lib/index.svelte";
-    import WebGL2Renderer from "$lib/render/webgl2/webgl2";
+    import WebGL2Renderer from "$lib/render/webgl2";
 
     let { init }: { init: (renderer: WebGL2Renderer) => void } = $props();
 

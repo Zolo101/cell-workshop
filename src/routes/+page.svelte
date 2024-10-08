@@ -14,8 +14,7 @@
     import WebGPUCanvas from "$lib/components/WebGPUCanvas.svelte";
     import Guide from "$lib/components/Guide.svelte";
     import Editor from "$lib/components/Editor.svelte";
-    import { lexModel, parseRules, parseRulesFromTokens } from "$lib/parse";
-    import type WebGPURenderer from "$lib/render/webgpu";
+    import { lexModel, parseRulesFromTokens } from "$lib/parse";
     import { palette, paletteAlias } from "$lib/constants";
     import { selectWihGrid, selectWithCell, selectWithSequence } from "$lib/cpu/select";
     import { isEqualArrays, pick } from "$lib/util";
