@@ -1,6 +1,6 @@
 import moduleCode from "./module.wgsl?raw";
+import type { RGBA } from "$lib/index.svelte";
 
-export type RGBA = [number, number, number, number]
 export default class WebGPURenderer {
     width: number
     height: number

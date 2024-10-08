@@ -1,4 +1,6 @@
 import type { paletteAlias } from "$lib/constants";
+import type WebGPURenderer from "$lib/render/webgpu/webgpu";
+import type WebGL2Renderer from "$lib/render/webgl2/webgl2";
 
 export let width = 64
 export let height = 64
@@ -89,3 +91,6 @@ type ModelError = {
 }
 
 export type ModelResult = ModelOK | ModelError
+
+export type Renderer = WebGPURenderer | WebGL2Renderer
+export type RGBA = [number, number, number, number]

@@ -8,7 +8,8 @@
         type ValidPattern,
         newBoard,
         type ModelResult,
-        type ModelOK
+        type ModelOK,
+        type Renderer
     } from "$lib/index.svelte";
     import WebGPUCanvas from "$lib/components/WebGPUCanvas.svelte";
     import Guide from "$lib/components/Guide.svelte";
@@ -18,6 +19,7 @@
     import { palette, paletteAlias } from "$lib/constants";
     import { selectWihGrid, selectWithCell, selectWithSequence } from "$lib/cpu/select";
     import { isEqualArrays, pick } from "$lib/util";
+    import WebGL2Canvas from "$lib/components/WebGL2Canvas.svelte";
 
     // TODO: (Reminder) Uint8Array is 0 to 255, so you cannot use them for board indexes
     // TODO: (Reminder) Uint16Array is 0 to 65535, which is suitable for up to 256x256 boards. After that, we need to use Uint32Array
@@ -51,7 +53,7 @@
     let interval = 16
     let playing = $state(false)
 
-    let renderer: WebGPURenderer;
+    let renderer: Renderer;
     // TODO: It's not 1 step, change this to a better name
     const step = () => {
         const t1 = performance.now()
@@ -68,17 +70,22 @@
         stepPerformance = t2 - t1
     }
 
-    const init = (r: WebGPURenderer) => {
+    const init = (r: Renderer) => {
         renderer = r;
         r.updateColours(palette)
         // console.log(model)
 
         restart()
-        setInterval(() => {
-            if (playing && model.ok) {
-                step()
-            }
-        }, interval)
+
+        window.requestAnimationFrame(frame)
+    }
+
+    const frame = (delta: number) => {
+        if (playing && model.ok) {
+            step()
+        }
+
+        window.requestAnimationFrame(frame)
     }
 
     const debug = (chance: number, ...text: unknown[]) => (Math.random() < chance) && console.log(...text)
@@ -286,7 +293,8 @@
                 </select>
             </div>
         </section>
-        <WebGPUCanvas {init}/>
+        <WebGL2Canvas {init}/>
+<!--        <WebGPUCanvas {init}/>-->
         <section class="flex *:grow m-5 gap-2 justify-around">
             <button onclick={pause}>{playing ? "⏸︎" : "⏵"}</button>
             <button onclick={step}>	⏭</button>
