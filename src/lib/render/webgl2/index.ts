@@ -7,6 +7,7 @@ import type { RGBA } from "$lib/index.svelte";
 export default class WebGL2Renderer {
     width: number
     height: number
+    board: Uint8ClampedArray
     private readonly gl: WebGL2RenderingContext
     private readonly programInfo: twgl.ProgramInfo
     private tileTexture: WebGLTexture
@@ -14,9 +15,10 @@ export default class WebGL2Renderer {
     private tiles: Uint8ClampedArray
     private readonly bufferInfo: twgl.BufferInfo;
 
-    constructor(width: number, height: number, gl: WebGL2RenderingContext) {
-        this.width = width;
-        this.height = height;
+    constructor(gl: WebGL2RenderingContext) {
+        this.width = 64;
+        this.height = 64;
+        this.board =  new Uint8ClampedArray(this.width * this.height);
         this.gl = gl
         const program = twgl.createProgram(gl, [vertexShader, fragmentShader])
         this.programInfo = twgl.createProgramInfoFromProgram(gl, program)
@@ -35,10 +37,11 @@ export default class WebGL2Renderer {
             min: gl.NEAREST,
             format: gl.RGBA,
             // TODO: Set limit for colours (1024)
+            // 2024 TODO: Not now, we only have 16 colours.
             // src: new Uint8ClampedArray(3 * 1024), // support 1024 colours
             src: this.createColourTexture(), // support 256 colours
             // width: 1024,
-            width: 256,
+            width: 17,
             height: 1,
         })
 
@@ -50,19 +53,28 @@ export default class WebGL2Renderer {
     private createColourTexture() {
         // return new Uint8ClampedArray(3 * this.width * this.height)
         // return new Uint8ClampedArray(3 * 1024) // support 1024 colours
-        return new Uint8ClampedArray(4 * 256) // support 256 colours
+        // return new Uint8ClampedArray(4 * 256) // support 256 colours
+        return new Uint8ClampedArray(4 * 17) // support 16 + ('all' color) RGBA colours
     }
 
     resize(width: number, height: number) {
+        // width and height must be a positive integer
+        if (!width || !height) return;
+
         this.width = width
         this.height = height
+        this.board = new Uint8ClampedArray(this.width * this.height)
         this.tiles = new Uint8ClampedArray(this.width * this.height)
         this.tileTexture = twgl.createTexture(this.gl, {
             mag: this.gl.NEAREST,
             min: this.gl.NEAREST,
             internalFormat: this.gl.R8,
             src: this.tiles,
+            width: this.width,
+            height: this.height,
         })
+
+        console.log("Resizing to", width, height)
 
         twgl.setTextureFromArray(this.gl, this.tileTexture, this.tiles, {internalFormat: this.gl.R8})
         this.render()
@@ -73,11 +85,12 @@ export default class WebGL2Renderer {
         let texture = this.createColourTexture()
         texture.set(colours.flat(), 0)
         // twgl.setTextureFromArray(this.gl, this.colours, texture, {format: this.gl.RGB, width: 1024, height: 1})
-        twgl.setTextureFromArray(this.gl, this.colours, texture, {format: this.gl.RGBA, width: 256, height: 1})
+        // twgl.setTextureFromArray(this.gl, this.colours, texture, {format: this.gl.RGBA, width: 256, height: 1})
+        twgl.setTextureFromArray(this.gl, this.colours, texture, {format: this.gl.RGBA, width: 17, height: 1})
     }
 
-    updateTiles(tiles: ArrayLike<number>) {
-        this.tiles.set(tiles, 0)
+    updateTiles() {
+        this.tiles.set(this.board, 0)
         this.render()
     }
 

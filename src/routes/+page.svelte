@@ -1,12 +1,8 @@
 <script lang="ts">
     import RuleComponent from "$lib/components/RuleComponent.svelte";
     import {
-        width,
-        height,
-        board,
         type Rule,
         type ValidPattern,
-        newBoard,
         type ModelResult,
         type ModelOK,
         type Renderer
@@ -16,12 +12,13 @@
     import Editor from "$lib/components/Editor.svelte";
     import { lexModel, parseRulesFromTokens } from "$lib/parse";
     import { palette, paletteAlias } from "$lib/constants";
-    import { selectWihGrid, selectWithCell, selectWithSequence } from "$lib/cpu/select";
     import { isEqualArrays, pick } from "$lib/util";
     import WebGL2Canvas from "$lib/components/WebGL2Canvas.svelte";
+    import RendererSelector from "$lib/cpu/select";
 
     // TODO: (Reminder) Uint8Array is 0 to 255, so you cannot use them for board indexes
     // TODO: (Reminder) Uint16Array is 0 to 65535, which is suitable for up to 256x256 boards. After that, we need to use Uint32Array
+    // TODO: (Reminder) Uint32Array is 0 to 4294967295, which is suitable for up to 65535x65535 boards.
 
     // (
     // BB/BB=WW/WW B>A
@@ -33,6 +30,7 @@
     // [B/*>O/* O/*/*>W/*/* (BW>BB W/W/W/W/W/W/W=*/*/*/B/*/*/*) OOOOOOOO/BBBBBBBB=***B****/******** (OW>*O OO/OB>*B/** OOOO/BBBB/OOOO=**B*/****/**** WW/BB/OB=*O/**/**)]
     // (*BB/WBB/*BB>***/GW*/*G* BBGGBB>GGBBGG)
     // (BW=WB BBUW=BBWW U=R RW=WG GW=WG GB=RR BBWBB=RBWBB R=U)
+    // (R=R B=R) (RB>RG BR>GR R/B>R/G B/R>G/R) (GB>GR BG>RG)
     // const model = parseRules("(RBB=WWR R*W=W*R)")
     // const model = parseRules("(RBB=GGR RGG=WWR)")
     // const model = parseRules("(RBB=**R)")
@@ -42,18 +40,19 @@
     let traversalsPerIntervalInputRaw = $state(1);
 
     // TODO: We can't change variables that are imported, so this is a workaround
-    let s_width = $state(width)
-    let s_height = $state(height)
+    let s_width = $state(64)
+    let s_height = $state(64)
 
     let traversalsPerIntervalSys = $derived(Math.floor(traversalsPerIntervalInputRaw ** 1.5))
     // let intervalInput = writable(50)
     // let interval = derived(intervalInput, (v) => v * 16)
     // let intervalSys = 16
     let interval = 16
-    let playing = $state(false)
+    let playing = $state(true)
 
     let renderer: Renderer;
-    // TODO: It's not 1 step, change this to a better name
+    let selector: RendererSelector;
+    // TODO: It's not 1 step, change trhis to a better name
     const step = () => {
         const t1 = performance.now()
         for (let i = 0; i < traversalsPerIntervalSys; i++) {
@@ -62,7 +61,7 @@
                 traverse((model as ModelOK).rules[j])
             }
         }
-        renderer.updateTiles(board)
+        renderer.updateTiles()
         const t2 = performance.now()
 
         steps += traversalsPerIntervalSys
@@ -71,6 +70,7 @@
 
     const init = (r: Renderer) => {
         renderer = r;
+        selector = new RendererSelector(renderer);
         r.updateColours(palette)
         // console.log(model)
 
@@ -89,9 +89,9 @@
 
     const debug = (chance: number, ...text: unknown[]) => (Math.random() < chance) && console.log(...text)
     const setBoardIndex = (index: number, select: ValidPattern) => {
-        const outOfBounds = index < 0 || index >= board.length;
+        const outOfBounds = index < 0 || index >= renderer.board.length;
         if (select !== "*" && !outOfBounds) {
-            board[index] = paletteAlias[select]
+            renderer.board[index] = paletteAlias[select]
         }
     }
 
@@ -100,27 +100,34 @@
         if (rule.group) {
             switch (rule.type) {
                 // Difference between Sequence and Markov:
-                // Sequence: All children are executed no matter what(?)
+                // Sequence: All children are executed no matter what
                 // Markov: If a child found a selection then it is only executed, the rest are ignored
                 case "Sequence":
+                    let successful = true;
                     for (const child of rule.children) {
-                        traverse(child);
+                        // TODO: We cant shorthand "&&=" this for some reason..?
+                        let success = traverse(child);
+                        if (success === false) {
+                            successful = false;
+                        }
                     }
-                    break;
+                    return successful;
                 case "Markov":
+                    let anySuccess = false;
                     for (const child of rule.children) {
                         const success = traverse(child);
                         if (success) {
+                            anySuccess = true;
                             break;
                         }
                     }
-                    break;
+                    return anySuccess;
             }
         } else {
             let selection;
             switch (rule.select.type) {
                 case "Cell":
-                    selection = selectWithCell(rule.select)
+                    selection = selector.selectWithCell(rule.select)
                     switch (rule.type) {
                         case "All":
                             for (const cellIndex of selection) {
@@ -136,7 +143,7 @@
                     }
                     break;
                 case "Sequence":
-                    selection = selectWithSequence(rule.select)
+                    selection = selector.selectWithSequence(rule.select)
                     switch (rule.type) {
                         case "All":
                             for (const sequence of selection) {
@@ -160,7 +167,7 @@
                     }
                     break;
                 case "Grid":
-                    selection = selectWihGrid(rule.select)
+                    selection = selector.selectWihGrid(rule.select)
                     // debug(1e-2, rule.select)
                     switch (rule.type) {
                         case "All":
@@ -198,9 +205,6 @@
 
             return selection.length > 0;
         }
-
-        // TODO: What's the appropriate return value for this?
-        return true;
     }
 
     const pause = () => {
@@ -209,10 +213,10 @@
 
     const restart = () => {
         steps = 0
-        board.fill(0)
+        renderer?.board.fill(0)
         // DEBUG
         // board[getIndexOfBoardCoordinate(width / 2, height / 2)] = paletteAlias["R"]
-        renderer?.updateTiles(board)
+        renderer?.updateTiles()
     }
 
     // let pastTokens: string[] = [];
@@ -235,6 +239,13 @@
         }
     }
 
+    // let settings = $derived(JSON.parse(localStorage.getItem("settings") ?? JSON.stringify({
+    //     width,
+    //     height,
+    //     display: "2d",
+    //     compute: "cpu"
+    // })))
+
     let rules = $state(localStorage.getItem("model") ?? "")
     let model = $derived(setModel(rules))
     $inspect(model).with(() => {
@@ -245,8 +256,11 @@
         // Update whenever the rule input element changes
         setModel(rules)
 
+        // Update whenever settings change
+        // localStorage.setItem("settings", JSON.stringify(settings))
+
         // Resize whenever width or height changes
-        newBoard(s_width, s_height)
+        // newBoard(s_width, s_height)
         renderer?.resize(s_width, s_height)
     })
 
@@ -263,9 +277,9 @@
             <div>
                 <span>Size:</span>
 <!--                TODO: 256 is arbitrary, increase it in the future -->
-                <input required min="1" max="256" class="w-12 text-blue-500 font-black text-center" bind:value={s_width}>
+                <input required min="1" max="1024" class="w-12 text-blue-500 font-black text-center" bind:value={s_width}>
                 <span>X</span>
-                <input required min="1" max="256" class="w-12 text-pink-500 font-black text-center" bind:value={s_height}>
+                <input required min="1" max="1024" class="w-12 text-pink-500 font-black text-center" bind:value={s_height}>
             </div>
             <div>
                 <span>Steps:</span>
@@ -279,16 +293,25 @@
         <section class="flex gap-2 text-sm py-2 *:grow *:inline-block *:bg-neutral-800 *:p-2">
             <div>
                 <span class="mr-2">Display Mode:</span>
+<!--                <select bind:value={settings.display}>-->
                 <select>
-                    <option>2D</option>
-                    <option disabled>3D (WebGPU, planned)</option>
+                    <option value="2d">2D</option>
+                    <option value="3d" disabled>3D (planned)</option>
                 </select>
             </div>
             <div>
                 <span class="mr-2">Compute On:</span>
+<!--                <select bind:value={settings.compute}>-->
                 <select>
-                    <option>CPU</option>
-                    <option disabled>GPU (WebGPU, planned)</option>
+                    <option value="cpu">CPU</option>
+                    <option value="gpu" disabled>GPU (planned)</option>
+                </select>
+            </div>
+            <div>
+                <span class="mr-2">API:</span>
+                <select disabled>
+                    <option value="webgl2">WebGL2</option>
+                    <option value="webgpu">WebGPU</option>
                 </select>
             </div>
         </section>
@@ -303,15 +326,21 @@
             <span>Traversals per step:</span>
             <input type="range" min="1" max="100" bind:value={traversalsPerIntervalInputRaw} step="1"/>
             <span>{traversalsPerIntervalSys}</span>
+<!--            <input type="range" min="0" max="100" bind:value={traversalsPerIntervalInputRaw} step="1"/>-->
+<!--            <span>{traversalsPerIntervalSys ? traversalsPerIntervalSys : "Auto"}</span>-->
         </section>
     </section>
 	<section class="mx-2 *:p-2 *:mb-2">
         <section class="bg-cyan-950/80">
             <Editor bind:code={rules}/>
-            <p class="text-xs text-right text-cyan-400 pt-2">Check out this <a onclick={() => dialog.show()} role="button">short guide</a> on how text rules work.</p>
-            {#if !model.ok}
-                <p class="text-cyan-500 text-xs">{model.failReason}</p>
-            {/if}
+            <div class="flex justify-between items-center my-1">
+                {#if !model.ok}
+                    <p class="text-cyan-500 text-xs">{model.failReason}</p>
+                {:else}
+                    <p class="text-cyan-500 text-xs"></p>
+                {/if}
+                <button class="z-10 bg-neutral-800/50 hover:bg-neutral-600/50 outline-neutral-400/30 text-xs" onclick={() => dialog.show()}>Guide</button>
+            </div>
         </section>
         <section class="relative bg-neutral-800/30 overflow-x-auto z-10">
             {#if model.ok}

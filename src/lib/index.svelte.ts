@@ -2,15 +2,6 @@ import type { paletteAlias } from "$lib/constants";
 import type WebGPURenderer from "$lib/render/webgpu";
 import type WebGL2Renderer from "$lib/render/webgl2";
 
-export let width = 64
-export let height = 64
-export let board = new Uint8Array(width * height);
-export const newBoard = (w: number, h: number) => {
-    width = w
-    height = w
-    board = new Uint8Array(w * h)
-}
-
 type Node = {
     type: string
     group: boolean

@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { width, height } from "$lib/index.svelte";
     import { onMount } from "svelte";
     import WebGPURenderer from "$lib/render/webgpu";
 

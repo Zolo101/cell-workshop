@@ -4,6 +4,7 @@ import type { RGBA } from "$lib/index.svelte";
 export default class WebGPURenderer {
     width: number
     height: number
+    board: Uint8ClampedArray
     private readonly context: GPUCanvasContext
     private readonly device: GPUDevice
 
@@ -16,9 +17,10 @@ export default class WebGPURenderer {
     private readonly pipeline: GPURenderPipeline
     private bindGroup: GPUBindGroup
 
-    constructor(width: number, height: number, context: GPUCanvasContext, device: GPUDevice) {
-        this.width = width
-        this.height = height
+    constructor(context: GPUCanvasContext, device: GPUDevice) {
+        this.width = 64
+        this.height = 64
+        this.board =  new Uint8ClampedArray(this.width * this.height);
         this.context = context
         this.device = device
         this.tiles = new Uint8ClampedArray(this.width * this.height)
@@ -122,8 +124,8 @@ export default class WebGPURenderer {
         this.render()
     }
 
-    updateTiles(tiles: ArrayLike<number>) {
-        this.tiles.set(tiles, 0)
+    updateTiles() {
+        this.tiles.set(this.board, 0)
         this.render()
     }
 
