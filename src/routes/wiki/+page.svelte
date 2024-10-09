@@ -44,6 +44,11 @@
     // console.log(sections)
 </script>
 
+<svelte:head>
+    <title>Collapsibles Wiki!</title>
+    <link rel="icon" href="wiki/favicon.png"/>
+</svelte:head>
+
 {#snippet info()}
     <section class="text-xs text-neutral-400 text-center">
         <p>Click on any example to run it</p>

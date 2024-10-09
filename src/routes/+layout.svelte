@@ -4,6 +4,7 @@
 
 <svelte:head>
 	<title>Collapsibles!</title>
+	<link rel="icon" href="favicon.png"/>
 </svelte:head>
 
 <header>
@@ -11,7 +12,7 @@
 		<div class="flex md:flex-col text-yellow-400/70">
 			<div class="flex items-end">
 				<h2 class="inline text-3xl font-black italic">Collapsibles!</h2>
-				<span class="text-xs">0.1.0</span>
+				<span class="text-xs">alpha 0.1.0</span>
 			</div>
 			<span class="text-xl">by <a href="https://zelo.dev">zelo.dev</a></span>
 	<!--		<span class="text-xl">•</span>-->
