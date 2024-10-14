@@ -63,6 +63,13 @@
         <p>Replaces black with white and blue</p>
     </div>
     <hr>
+    <h2>Omnidirectional</h2>
+    <p>By prefixing an algorithm with <code>~</code>, it will match, disregarding the pattern's direction.</p>
+    <div class="grid grid-cols-1">
+        {@render rule("[B=W WB/WB~=AA/AA]", "stone")}
+        <p>(TODO: REPLACE TEXT)</p>
+    </div>
+    <hr>
     <p class="text-center">For more info, check out the <a href="/wiki">wiki!</a> You can also click on text in any rule visualiser for more information.</p>
     <form method="dialog" class="flex justify-center m-2">
         <button>Let's Start!</button>

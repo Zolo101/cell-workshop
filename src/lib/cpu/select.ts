@@ -118,98 +118,95 @@ export default class RendererSelector {
     getBoardCoordinateFromIndex(index: number) {
         return [index % this.renderer.width, Math.floor(index / this.renderer.height)]
     }
+
     getIndexesFromLine(x: number, y: number, direction: Direction, length: number) {
         const indexes = new Uint32Array(length);
 
+
+        // TODO: There is a 1 pixel gap to the right and bottom...
+        if (x + length > this.renderer.width + 0 || y + length > this.renderer.height + 0) return indexes;
+
         switch (direction) {
             case 0: // Up (default)
-                if (x + length > this.renderer.width) return indexes;
                 for (let i = 0; i < length; i++) indexes[i] = this.getIndexOfBoardCoordinate(x + i, y)
                 break;
-            // TODO: Rearrange these directions, they are wrong
-            /*
-        case 1: // Right
-            if (x + (extraSpace) >= width || y - (extraSpace) <= 0) return indexes;
-            for (let i = 0; i < length; i++) indexes[i] = getIndexOfBoardCoordinate(x + i, y)
-            break;
-        case 2: // Down
-            if (x - (extraSpace) <= 0 || y + (extraSpace) >= height) return indexes;
-            for (let i = 0; i < length; i++) indexes[i] = getIndexOfBoardCoordinate(x, y + i)
-            break;
-        case 3: // Left
-            if (x + (extraSpace) >= width || y - (extraSpace) <= 0) return indexes;
-            for (let i = 0; i < length; i++) indexes[i] = getIndexOfBoardCoordinate(x - i, y)
-            break;
-             */
+            case 1: // Right
+                for (let i = 0; i < length; i++) indexes[i] = this.getIndexOfBoardCoordinate(x, y + i)
+                break;
+            case 2: // Down
+                for (let i = 0; i < length; i++) indexes[i] = this.getIndexOfBoardCoordinate(x - i, y)
+                break;
+            case 3: // Left
+                for (let i = 0; i < length; i++) indexes[i] = this.getIndexOfBoardCoordinate(x, y - i)
+                break;
         }
 
-        // const outOfBounds = indexes.some(i => i < 0 || i >= board.length);
+        // const outOfBounds = indexes.some(i => i < 0 || i >= this.renderer.board.length);
         // return outOfBounds ? undefined : indexes;
         return indexes;
     }
 
     getIndexesFromSquare(x: number, y: number, w: number, h: number, rotation: Direction) {
+        const w2 = w;
+        const h2 = h;
         const indexes: Uint32Array[] = [];
-        for (let i = 0; i < w; i++) {
-            indexes.push(new Uint32Array(h))
+        for (let i = 0; i < w2; i++) {
+            indexes.push(new Uint32Array(h2))
         }
 
-        const upWidth = (w - 0);
-        const upHeight = (h - 0);
-        // const upWidth = (h - 20);
-        // const upHeight = (w - 20);
+        const upWidth = (w2 - 0);
+        const upHeight = (h2 - 0);
+        // const upWidth = (h2 - 20);
+        // const upHeight = (w2 - 20);
         switch (rotation) {
-            // Replacing i < w with i < h made the game way faster?
-            // indexes.push(board.slice(getIndexOfBoardCoordinate(x, y - i), getIndexOfBoardCoordinate(x + w, y - i)));
+            // Replacing i < w2 with i < h2 made the game way faster?
+            // indexes.push(board.slice(getIndexOfBoardCoordinate(x, y - i), getIndexOfBoardCoordinate(x + w2, y - i)));
             case 0: // Up is default
-                // console.log(x + upWidth >= width, x, y, upWidth, upHeight, w, h)
-                // if (x + w > width + 0 || y + h < 0) return [];
-                if (x > this.renderer.width + 0 || y + h < 0) return [];
+                // console.log(x + upWidth >= width, x, y, upWidth, upHeight, w2, h2)
+                // if (x + w2 > width + 0 || y + h2 < 0) return [];
+                // if (x > this.renderer.width + 0 || y + h2 < 0) return [];
 
-                for (let i = 0; i < h; i++) {
+                for (let i = 0; i < h2; i++) {
                     // indexes.push([])
-                    for (let j = 0; j < w; j++) {
+                    for (let j = 0; j < w2; j++) {
                         indexes[j][i] = this.getIndexOfBoardCoordinate(x + i, y + j)
                     }
                 }
                 break;
-            // TODO: AI code warning, this seems to work but could be wrong
-            /*
-        case 1: // Right
-            if (true) return [];
-            // if (x + h > width || y - w < 0) return [];
+                // TODO: AI code warning, this seems to work but could be wrong
+            case 1: // Right
+                // if (true) return [];
+                // if (x + h2 > width || y - w2 < 0) return [];
 
-            for (let i = 0; i < h; i++) {
-                // indexes.push([]);
-                for (let j = 0; j < w; j++) {
-                    indexes[j][i] = getIndexOfBoardCoordinate(x + i, y + j)
+                for (let i = 0; i < h2; i++) {
+                    // indexes.push([]);
+                    for (let j = 0; j < w2; j++) {
+                        indexes[j][i] = this.getIndexOfBoardCoordinate(x + i, y - j)
+                    }
                 }
-            }
-            break;
-        case 2: // Down
-            if (x - upWidth < 0 || y + upHeight >= height) return [];
-            // if (x + w > width || y - h < 0) return [];
+                break;
+            case 2: // Down
+                // if (x - upWidth < 0 || y + upHeight >= height) return [];
+                // if (x + w2 > width || y - h2 < 0) return [];
 
-            for (let i = 0; i < h; i++) {
-                // indexes.push([]);
-                for (let j = 0; j < w; j++) {
-                    indexes[j][i] = getIndexOfBoardCoordinate(x - j, y + i)
+                for (let i = 0; i < h2; i++) {
+                    // indexes.push([]);
+                    for (let j = 0; j < w2; j++) {
+                        indexes[j][i] = this.getIndexOfBoardCoordinate(x - j, y + i)
+                    }
                 }
-            }
-            break;
-        case 3: // Left
-            if (true) return [];
-            // if (x + h > width || y - w < 0) return [];
+                break;
+            case 3: // Left
+                // if (true) return [];
+                // if (x + h2 > width || y - w2 < 0) return [];
 
-            for (let i = 0; i < h; i++) {
-                // indexes.push([]);
-                for (let j = 0; j < w; j++) {
-                    indexes[j][i] = getIndexOfBoardCoordinate(x - i, y - j)
+                for (let i = 0; i < h2; i++) {
+                    // indexes.push([]);
+                    for (let j = 0; j < w2; j++) {
+                        indexes[j][i] = this.getIndexOfBoardCoordinate(x - i, y - j)
+                    }
                 }
-            }
-            break;
-
-             */
+                break;
         }
 
         // const outOfBounds = indexes
@@ -252,94 +249,48 @@ export default class RendererSelector {
         return indexes;
     }
 
-    selectWithSequence(pattern: PatternSequence): Uint32Array[] {
+    selectWithSequence(pattern: PatternSequence, omnidirectional: boolean): Uint32Array[] {
         const indexSequences: Uint32Array[] = [];
         const sequenceLength = pattern.select.length;
         for (let i = 0; i < this.renderer.board.length; i++) {
             const [x, y] = this.getBoardCoordinateFromIndex(i);
 
-            // up
             const lineUp = this.getIndexesFromLine(x, y, Direction.Up, sequenceLength);
-            // if (lineUp) {
-            if (this.isSequenceEqualToArray(pattern.select, lineUp)) {
-                indexSequences.push(lineUp);
+            if (this.isSequenceEqualToArray(pattern.select, lineUp)) indexSequences.push(lineUp);
+
+            if (omnidirectional) {
+                const lineLeft = this.getIndexesFromLine(x, y, Direction.Left, sequenceLength);
+                const lineDown = this.getIndexesFromLine(x, y, Direction.Down, sequenceLength);
+                const lineRight = this.getIndexesFromLine(x, y, Direction.Right, sequenceLength);
+
+                if (this.isSequenceEqualToArray(pattern.select, lineLeft)) indexSequences.push(lineLeft);
+                if (this.isSequenceEqualToArray(pattern.select, lineDown)) indexSequences.push(lineDown);
+                if (this.isSequenceEqualToArray(pattern.select, lineRight)) indexSequences.push(lineRight);
             }
-            // }
-
-            /*
-            // left
-            const lineLeft = getIndexesFromLine(x, y, Direction.Left, sequenceLength);
-            // if (lineLeft) {
-                if (isSequenceEqualToArray(pattern.select, lineLeft)) {
-                    indexSequences.push(lineLeft);
-                }
-            // }
-
-            // down
-            const lineDown = getIndexesFromLine(x, y, Direction.Down, sequenceLength);
-            // if (lineDown) {
-                if (isSequenceEqualToArray(pattern.select, lineDown)) {
-                    indexSequences.push(lineDown);
-                }
-            // }
-
-            // right
-            const lineRight = getIndexesFromLine(x, y, Direction.Right, sequenceLength);
-            // if (lineRight) {
-                if (isSequenceEqualToArray(pattern.select, lineRight)) {
-                    indexSequences.push(lineRight);
-                }
-            // }
-
-             */
         }
 
         return indexSequences;
     }
 
-    selectWihGrid(pattern: PatternGrid): Uint32Array[][] {
+    selectWithGrid(pattern: PatternGrid, omnidirectional: boolean): Uint32Array[][] {
         const indexGrids: Uint32Array[][] = [];
         const gridWidth = pattern.select.length;
         const gridHeight = pattern.select[0].length;
         for (let i = 0; i < this.renderer.board.length; i++) {
             const [x, y] = this.getBoardCoordinateFromIndex(i);
 
-            // up
             const lineUp = this.getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Up);
-            // debug(1e-6, lineUp)
-            // if (lineUp) {
-            //     debug(1e-6, "match", pattern.select, lineUp)
-            if (this.isGridEqualToArray(pattern.select, lineUp)) {
-                indexGrids.push(lineUp);
+            if (this.isGridEqualToArray(pattern.select, lineUp)) indexGrids.push(lineUp);
+
+            if (omnidirectional) {
+                const lineLeft = this.getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Left);
+                const lineDown = this.getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Down);
+                const lineRight = this.getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Right);
+
+                if (this.isGridEqualToArray(pattern.select, lineLeft)) indexGrids.push(lineLeft);
+                if (this.isGridEqualToArray(pattern.select, lineDown)) indexGrids.push(lineDown);
+                if (this.isGridEqualToArray(pattern.select, lineRight)) indexGrids.push(lineRight);
             }
-            // }
-
-            /*
-            // left
-            const lineLeft = getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Left);
-            // if (lineLeft) {
-                if (isGridEqualToArray(pattern.select, lineLeft)) {
-                    indexGrids.push(lineLeft);
-                }
-            // }
-
-            // down
-            const lineDown = getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Down);
-            // if (lineDown) {
-                if (isGridEqualToArray(pattern.select, lineDown)) {
-                    indexGrids.push(lineDown);
-                }
-            // }
-
-            // right
-            const lineRight = getIndexesFromSquare(x, y, gridWidth, gridHeight, Direction.Right);
-            // if (lineRight) {
-                if (isGridEqualToArray(pattern.select, lineRight)) {
-                    indexGrids.push(lineRight);
-                }
-            // }
-
-             */
         }
 
         return indexGrids

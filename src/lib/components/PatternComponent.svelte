@@ -27,14 +27,18 @@
     {/if}
 {/snippet}
 
-<section class="flex">
-    {#if pattern.type === "Cell"}
-        {@render icon(pattern.select)}
-    {:else if pattern.type === "Sequence"}
+
+<!-- TODO: Do we need the section tags? -->
+{#if pattern.type === "Cell"}
+    {@render icon(pattern.select)}
+{:else if pattern.type === "Sequence"}
+    <section class="flex">
         {#each pattern.select as select}
             {@render icon(select)}
         {/each}
-    {:else if pattern.type === "Grid"}
+    </section>
+{:else if pattern.type === "Grid"}
+    <section>
         {#each pattern.select as row}
             <div class="flex">
                 {#each row as select}
@@ -42,5 +46,5 @@
                 {/each}
             </div>
         {/each}
-    {/if}
-</section>
+    </section>
+{/if}

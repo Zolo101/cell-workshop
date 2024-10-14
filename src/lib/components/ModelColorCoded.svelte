@@ -15,6 +15,7 @@
         "sequence": {color: "#ff7b00", fontWeight: "bold", position: "relative", top: "-1px"},
         "one": {color: "#b3b3b3"},//, fontWeight: "bold"},
         "all": {color: "cyan"},//, fontWeight: "bold"},
+        "omnidirectional": {color: "#92baff"},
         "B": {backgroundColor: paletteToRGBA(palette[0])},
         "I": {backgroundColor: paletteToRGBA(palette[1])},
         "P": {backgroundColor: paletteToRGBA(palette[2])},
@@ -127,6 +128,9 @@
                     break;
                 case ">":
                     tokens.push(createToken("all", part))
+                    break;
+                case "~":
+                    tokens.push(createToken("omnidirectional", part))
                     break;
                 case "/":
                 case "=":

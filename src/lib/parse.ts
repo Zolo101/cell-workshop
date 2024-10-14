@@ -3,7 +3,7 @@ import { paletteAlias } from "$lib/constants";
 
 const isValidPatternString = (pattern: string) => {
     for (const char of pattern) {
-        if (!(char in paletteAlias || char === "*" || char === "/")) {
+        if (!(char in paletteAlias || char === "*" || char === "/" || char === "~")) {
             return false;
         }
     }
@@ -85,8 +85,9 @@ export const lexModel = (model: string): string[] => {
                 case "[":
                 case "]":
                 case ")":
-                case "=":
-                case ">":
+                case "~": // Omnidirectional
+                case "=": // One
+                case ">": // All
                 // case "/":
                     if (builder.length > 0) {
                         tokens.push(builder, char)
@@ -119,6 +120,7 @@ type RuleBuilderTree = {
 type RuleBuilderLeaf = {
     type: "All" | "One",
     parent: false
+    omnidirectional: boolean
     tokens: string[]
     startIndex: number
     endIndex: number
@@ -134,8 +136,10 @@ const buildTokens = (type: "Sequence" | "Markov", tokens: string[], startIndex: 
         startIndex,
         endIndex: startIndex
     }
+    let omnidirectional = false;
     for (let i = startIndex; i < tokens.length; i++) {
         const token = tokens[i];
+
         switch (token) {
             case "[":
             case "(":
@@ -146,15 +150,20 @@ const buildTokens = (type: "Sequence" | "Markov", tokens: string[], startIndex: 
             case ")":
                 build.endIndex = i;
                 return build;
+            case "~":
+                omnidirectional = true;
+                break;
             case "=":
             case ">":
                 build.parts.push({
                     type: token === "=" ? "One" : "All",
+                    omnidirectional,
                     parent: false,
-                    tokens: [tokens[i - 1], tokens[i + 1]],
+                    tokens: omnidirectional ? [tokens[i - 2], tokens[i + 1]] : [tokens[i - 1], tokens[i + 1]],
                     startIndex: i - 1,
                     endIndex: i + 1
                 })
+                omnidirectional = false;
                 break;
             default:
                 break;
@@ -176,6 +185,7 @@ const createRules = (builds: RuleBuilderTree): Rule[] => {
         } else {
             rules.push({
                 type: part.type,
+                omnidirectional: part.omnidirectional,
                 group: false,
                 select: buildPattern(part.tokens[0]),
                 result: buildPattern(part.tokens[1])
@@ -191,9 +201,10 @@ export const parseRules = (model: string): Rule[] => {
     const builds = buildTokens("Sequence", tokens, 0) as RuleBuilderTree;
     const rules = createRules(builds)
 
-    // console.log(JSON.stringify(builds, null, 2))
+    console.log("Tokens:", tokens)
+    console.log("Builds:", JSON.stringify(builds, null, 2))
     // console.log(builds)
-    // console.log(rules)
+    console.log("Rules:", JSON.stringify(rules, null, 2))
     return rules
 }
 
@@ -202,181 +213,3 @@ export const parseRulesFromTokens = (tokens: string[]): Rule[] => {
     const rules = createRules(builds)
     return rules
 }
-
-// export const parseRules = (model: string): Rule[] => {
-//     // console.log("Parsing model", model)
-//     let rule: Rule[] = [];
-//     let workingRules: Rule[] = [];
-//     let workingType: "One" | "All" = "One";
-//     let workingPatternStrings: Record<string, ValidPattern[]>[] = []
-//     let workingGridStrings: Record<string, ValidPattern[][]>[] = []
-//     let depth = -1;
-//
-//     let currentWorkingPattern = "L"
-//
-//     const addGroupRule = (type: "Sequence" | "Markov") => {
-//         currentWorkingPattern = "L"
-//         workingRules.push({
-//             type,
-//             group: true,
-//             children: []
-//         })
-//         workingPatternStrings.push({
-//             L: [],
-//             R: []
-//         })
-//         workingGridStrings.push({
-//             L: [],
-//             R: []
-//         })
-//         depth++;
-//     }
-//
-//     for (const char of model) {
-//         console.log(char, JSON.stringify(workingPatternStrings))
-//         switch (char) {
-//             case "[":
-//                 // TODO: Make "Stack" class?
-//                 addGroupRule("Sequence")
-//                 break;
-//             case "(":
-//                 // currentWorkingPattern = "L"
-//                 addGroupRule("Markov")
-//                 break;
-//             case "]":
-//             case ")":
-//                 const workingRule_Bracket = workingRules.pop();
-//
-//                 if (workingRule_Bracket && workingRule_Bracket.group) {
-//                     // TODO: Remove duplicate code
-//                     // Check if we have a grid pattern
-//                     // const workingGridString = workingGridStrings[depth];
-//                     // const workingPatternString = workingPatternStrings[depth];
-//                     if (workingGridStrings[depth].L.length > 0) {
-//                         // We got a grid pattern!
-//
-//                         if (workingGridStrings[depth].L.length === workingGridStrings[depth].R.length) {
-//                             workingGridStrings[depth].L.push(workingPatternStrings[depth].L)
-//                             workingGridStrings[depth].R.push(workingPatternStrings[depth].R)
-//
-//                             workingRule_Bracket.children.push({
-//                                 type: workingType,
-//                                 group: false,
-//                                 select: buildGridPattern(workingGridStrings[depth].L),
-//                                 result: buildGridPattern(workingGridStrings[depth].R)
-//                             })
-//                         } else {
-//                             throw "Left and Right patterns must be the same width & height"
-//                         }
-//                     } else {
-//                         // Then we have a normal pattern
-//                         if (workingPatternStrings[depth].R.length > 0) {
-//                             workingRule_Bracket.children.push({
-//                                 type: workingType,
-//                                 group: false,
-//                                 select: buildPattern(workingPatternStrings[depth].L),
-//                                 result: buildPattern(workingPatternStrings[depth].R)
-//                             })
-//                         } else {
-//                             throw "Right Pattern not found"
-//                         }
-//                     }
-//
-//                     console.log(workingPatternStrings[depth].L, workingPatternStrings[depth].R)
-//                     if (workingPatternStrings[depth].L.length !== workingPatternStrings[depth].R.length) {
-//                         throw "Left and Right patterns must be the same length"
-//                     }
-//
-//                     rule.push(workingRule_Bracket)
-//                     // workingRules = null;
-//                     // workingPattern.L = null;
-//                     // workingPattern.R = null;
-//                     workingType = "One";
-//                     workingPatternStrings[depth].L = [];
-//                     workingPatternStrings[depth].R = [];
-//                     workingGridStrings[depth].L = [];
-//                     workingGridStrings[depth].R = [];
-//                     currentWorkingPattern = "L";
-//                 } else {
-//                     throw "Unmatched )"
-//                 }
-//                 depth--;
-//                 break;
-//             case "=":
-//                 if (workingPatternStrings[depth].L) {
-//                     currentWorkingPattern = "R";
-//                     workingType = "One";
-//                 } else {
-//                     throw "Left Pattern not found"
-//                 }
-//                 break;
-//             case ">":
-//                 if (workingPatternStrings[depth].L) {
-//                     currentWorkingPattern = "R";
-//                     workingType = "All";
-//                 } else {
-//                     throw "Left Pattern not found"
-//                 }
-//                 break;
-//             case "/":
-//                 workingGridStrings[depth][currentWorkingPattern].push(workingPatternStrings[depth][currentWorkingPattern])
-//                 workingPatternStrings[depth][currentWorkingPattern] = []
-//                 break;
-//             case " ":
-//                 const workingRule_Space = workingRules[depth];
-//                 if (workingRule_Space && workingRule_Space.group) {
-//                     // Check if we have a grid pattern
-//                     // const workingGridString = workingGridStrings[depth];
-//                     // const workingPatternString = workingPatternStrings[depth];
-//                     if (workingGridStrings[depth].L.length > 0) {
-//                         // We got a grid pattern!
-//                         workingGridStrings[depth].L.push(workingPatternStrings[depth].L)
-//                         workingGridStrings[depth].R.push(workingPatternStrings[depth].R)
-//
-//                         if (workingGridStrings[depth].L.length === workingGridStrings[depth].R.length) {
-//                             workingRule_Space.children.push({
-//                                 type: workingType,
-//                                 group: false,
-//                                 select: buildGridPattern(workingGridStrings[depth].L),
-//                                 result: buildGridPattern(workingGridStrings[depth].R)
-//                             })
-//                         } else {
-//                             throw "Left and Right patterns must be the same width & height"
-//                         }
-//                     } else {
-//                         if (workingPatternStrings[depth].R.length > 0) {
-//                             workingRule_Space.children.push({
-//                                 type: workingType,
-//                                 group: false,
-//                                 select: buildPattern(workingPatternStrings[depth].L),
-//                                 result: buildPattern(workingPatternStrings[depth].R)
-//                             })
-//                         } else {
-//                             throw "Right Pattern not found"
-//                         }
-//                     }
-//                     // workingPattern.L = null;
-//                     // workingPattern.R = null;
-//                     workingType = "One";
-//                     // workingPatternStrings[depth].L = [];
-//                     // workingPatternStrings[depth].R = [];
-//                     // workingGridStrings[depth].L = [];
-//                     // workingGridStrings[depth].R = [];
-//                     currentWorkingPattern = "L";
-//                 } else {
-//                     // throw "Unmatched )"
-//                 }
-//                 break;
-//             default:
-//                 if (char in paletteAlias) {
-//                     console.log(char, workingPatternStrings, depth, currentWorkingPattern, workingPatternStrings.length)
-//                     workingPatternStrings[depth][currentWorkingPattern].push(char as ValidPattern);
-//                 } else {
-//                     throw "Invalid character: " + char
-//                 }
-//                 break;
-//         }
-//     }
-//
-//     return rule;
-// }

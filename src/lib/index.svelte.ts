@@ -20,6 +20,7 @@ export type Pattern = PatternCell | PatternSequence | PatternGrid
 
 type Singlet = Node & {
     group: false,
+    omnidirectional: boolean
     select: Pattern
     result: Pattern // TODO: Better name for this?
 }
