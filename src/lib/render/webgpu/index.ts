@@ -1,10 +1,11 @@
-import moduleCode from "./module.wgsl?raw";
+import moduleCode from "./2D/module.wgsl?raw";
 import type { RGBA } from "$lib/index.svelte";
 
 export default class WebGPURenderer {
     width: number
     height: number
     board: Uint8ClampedArray
+    thirdDimension: boolean
     private readonly context: GPUCanvasContext
     private readonly device: GPUDevice
 
@@ -21,6 +22,7 @@ export default class WebGPURenderer {
         this.width = 64
         this.height = 64
         this.board =  new Uint8ClampedArray(this.width * this.height);
+        this.thirdDimension = false;
         this.context = context
         this.device = device
         this.tiles = new Uint8ClampedArray(this.width * this.height)

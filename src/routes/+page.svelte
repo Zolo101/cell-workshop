@@ -41,7 +41,7 @@
 
     // TODO: We can't change variables that are imported, so this is a workaround
     let s_width = $state(64)
-    let s_height = $state(64)
+    // let s_height = $state(64 * 2)
 
     let traversalsPerIntervalSys = $derived(Math.floor(traversalsPerIntervalInputRaw ** 1.5))
     // let intervalInput = writable(50)
@@ -143,7 +143,7 @@
                     }
                     break;
                 case "Sequence":
-                    selection = selector.selectWithSequence(rule.select)
+                    selection = selector.selectWithSequence(rule.select, rule.omnidirectional)
                     switch (rule.type) {
                         case "All":
                             for (const sequence of selection) {
@@ -167,7 +167,7 @@
                     }
                     break;
                 case "Grid":
-                    selection = selector.selectWihGrid(rule.select)
+                    selection = selector.selectWithGrid(rule.select, rule.omnidirectional)
                     // debug(1e-2, rule.select)
                     switch (rule.type) {
                         case "All":
@@ -260,9 +260,15 @@
         // localStorage.setItem("settings", JSON.stringify(settings))
 
         // Resize whenever width or height changes
-        // newBoard(s_width, s_height)
-        renderer?.resize(s_width, s_height)
+        renderer?.resize(s_width, s_width)
     })
+
+    // setInterval(() => {
+    //     let x = ~~(Math.random() * s_width)
+    //     let y = ~~(Math.random() * s_width)
+    //
+    //     renderer?.resize(x, y)
+    // }, 1000)
 
     let dialog: HTMLDialogElement;
 </script>
@@ -277,9 +283,10 @@
             <div>
                 <span>Size:</span>
 <!--                TODO: 256 is arbitrary, increase it in the future -->
-                <input required min="1" max="1024" class="w-12 text-blue-500 font-black text-center" bind:value={s_width}>
+                <input type="number" required min="1" max="1024" class="w-12 text-blue-500 font-black text-center" bind:value={s_width}>
                 <span>X</span>
-                <input required min="1" max="1024" class="w-12 text-pink-500 font-black text-center" bind:value={s_height}>
+<!--                TODO: Non-square sizes don't work for now... see Renderer-->
+                <input type="number" required min="1" max="1024" class="w-12 text-pink-500 font-black text-center" bind:value={s_width}>
             </div>
             <div>
                 <span>Steps:</span>

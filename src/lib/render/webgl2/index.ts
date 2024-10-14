@@ -1,13 +1,14 @@
 import * as twgl from "twgl.js";
 // import "webgl-lint";
-import vertexShader from "./vertex.glsl?raw";
-import fragmentShader from "./fragment.glsl?raw";
+import vertexShader from "./2D/vertex.glsl?raw";
+import fragmentShader from "./2D/fragment.glsl?raw";
 import type { RGBA } from "$lib/index.svelte";
 
 export default class WebGL2Renderer {
     width: number
     height: number
     board: Uint8ClampedArray
+    thirdDimension: boolean
     private readonly gl: WebGL2RenderingContext
     private readonly programInfo: twgl.ProgramInfo
     private tileTexture: WebGLTexture
@@ -18,11 +19,12 @@ export default class WebGL2Renderer {
     constructor(gl: WebGL2RenderingContext) {
         this.width = 64;
         this.height = 64;
-        this.board =  new Uint8ClampedArray(this.width * this.height);
+        this.board = new Uint8ClampedArray(this.width * this.height);
+        this.tiles = new Uint8ClampedArray(this.width * this.height)
+        this.thirdDimension = false;
         this.gl = gl
         const program = twgl.createProgram(gl, [vertexShader, fragmentShader])
         this.programInfo = twgl.createProgramInfoFromProgram(gl, program)
-        this.tiles = new Uint8ClampedArray(this.width * this.height)
         this.bufferInfo = twgl.primitives.createXYQuadBufferInfo(gl);
 
         this.tileTexture = twgl.createTexture(gl, {
@@ -30,6 +32,9 @@ export default class WebGL2Renderer {
             min: gl.NEAREST,
             internalFormat: gl.R8,
             src: this.tiles,
+
+            width: this.width,
+            height: this.height,
         })
 
         this.colours = twgl.createTexture(gl, {
@@ -37,7 +42,7 @@ export default class WebGL2Renderer {
             min: gl.NEAREST,
             format: gl.RGBA,
             // TODO: Set limit for colours (1024)
-            // 2024 TODO: Not now, we only have 16 colours.
+            // 2024 TODO: Not now, we only have 17 colours.
             // src: new Uint8ClampedArray(3 * 1024), // support 1024 colours
             src: this.createColourTexture(), // support 256 colours
             // width: 1024,
@@ -46,7 +51,7 @@ export default class WebGL2Renderer {
         })
 
         // window.addEventListener("updateTileEvent", this.updateColours)
-        requestAnimationFrame(() => this.render())
+        // requestAnimationFrame(() => this.render())
         console.log("WebGL2 renderer initialised")
     }
 
@@ -60,6 +65,9 @@ export default class WebGL2Renderer {
     resize(width: number, height: number) {
         // width and height must be a positive integer
         if (!width || !height) return;
+
+        // must be less than 1024 so the browser doesn't crash
+        if (width > 1024 || height > 1024) return;
 
         this.width = width
         this.height = height
@@ -110,8 +118,9 @@ export default class WebGL2Renderer {
 
         // these move and scale the unit quad into the size we want
         // in the target as pixels
-        twgl.m4.translate(matrix, [0, 0, 0], matrix);
+        // twgl.m4.translate(matrix, [0, 0, 0], matrix);
         twgl.m4.scale(matrix, [this.width, this.height, 1], matrix);
+        // twgl.m4.scale(matrix, [1, 1, 1], matrix);
 
         this.gl.useProgram(this.programInfo.program);
         twgl.setBuffersAndAttributes(this.gl, this.programInfo, this.bufferInfo);
