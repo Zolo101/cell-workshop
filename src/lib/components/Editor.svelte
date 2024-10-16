@@ -21,7 +21,7 @@
 </script>
 
 <div class="bg-neutral-800 w-full pb-5">
-    <textarea id="ta" bind:value={code}></textarea>
+    <textarea id="ta" autocapitalize="none" autocomplete="off" spellcheck="false" bind:value={code}></textarea>
     <pre id="c"><code class="whitespace-pre"><ModelColorCoded {code}/></code></pre>
     <!--{#await codeAI}-->
     <!--{:then codeAI}-->

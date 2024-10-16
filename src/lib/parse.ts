@@ -201,10 +201,10 @@ export const parseRules = (model: string): Rule[] => {
     const builds = buildTokens("Sequence", tokens, 0) as RuleBuilderTree;
     const rules = createRules(builds)
 
-    console.log("Tokens:", tokens)
-    console.log("Builds:", JSON.stringify(builds, null, 2))
+    // console.log("Tokens:", tokens)
+    // console.log("Builds:", JSON.stringify(builds, null, 2))
     // console.log(builds)
-    console.log("Rules:", JSON.stringify(rules, null, 2))
+    // console.log("Rules:", JSON.stringify(rules, null, 2))
     return rules
 }
 

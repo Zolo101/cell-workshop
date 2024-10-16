@@ -167,17 +167,16 @@
                     }
                     break;
                 case "Grid":
+                    const gridWidth = rule.result.select.length;
+                    const gridHeight = rule.result.select[0].length;
                     selection = selector.selectWithGrid(rule.select, rule.omnidirectional)
                     // debug(1e-2, rule.select)
                     switch (rule.type) {
                         case "All":
                             for (const grid of selection) {
-                                const gridWidth = grid.length;
-                                const gridHeight = grid[0].length;
-
                                 for (let x = 0; x < gridWidth; x++) {
                                     for (let y = 0; y < gridHeight; y++) {
-                                        const index = grid[x][y];
+                                        const index = grid[x * gridWidth + y];
                                         const result = rule.result.select[x][y];
                                         setBoardIndex(index, result as ValidPattern)
                                     }
@@ -187,12 +186,9 @@
                         case "One":
                             if (selection.length > 0) {
                                 const grid = pick(selection);
-                                const gridWidth = grid.length;
-                                const gridHeight = grid[0].length;
-
                                 for (let x = 0; x < gridWidth; x++) {
                                     for (let y = 0; y < gridHeight; y++) {
-                                        const index = grid[x][y];
+                                        const index = grid[x * gridWidth + y];
                                         const result = rule.result.select[x][y];
                                         setBoardIndex(index, result as ValidPattern)
                                     }
