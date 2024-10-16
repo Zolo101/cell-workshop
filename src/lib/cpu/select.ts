@@ -1,5 +1,5 @@
-import { type PatternNode, type Renderer, type ValidPattern } from "$lib/index.svelte";
-import { paletteAlias } from "$lib/constants";
+import { type PatternNode, type Renderer } from "$lib/index.svelte";
+import { paletteAlias, type ValidPattern } from "$lib/constants";
 
 type PatternCell = PatternNode & {type: "Cell", select: ValidPattern}
 type PatternSequence = PatternNode & {type: "Sequence", select: ValidPattern[]}
@@ -33,9 +33,8 @@ export default class RendererSelector {
         this.renderer = renderer;
     }
 
-    // const isCellPaletteAlias = (cell: number, alias: ValidPattern) => alias === "*" ? true : cell === paletteAlias[alias]
     isCellPaletteAlias(cell: number, alias: ValidPattern) {
-        return alias === "*" || cell === paletteAlias[alias]
+        return alias === "*" || cell === paletteAlias.get(alias)
     }
 
     getIndexesFromLine(start: number, direction: Direction, length: number) {

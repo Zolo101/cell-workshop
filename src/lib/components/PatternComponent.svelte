@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { type Pattern, type ValidPattern } from "$lib/index.svelte";
-    import { palette, paletteAlias } from "$lib/constants";
+    import { type Pattern } from "$lib/index.svelte";
+    import { palette, paletteAlias, type ValidPattern } from "$lib/constants";
 
     export let pattern: Pattern;
 
@@ -9,7 +9,7 @@
 </script>
 
 {#snippet icon(char: ValidPattern)}
-    {@const color = palette[paletteAlias[char]]}
+    {@const color = palette[paletteAlias.get(char)!]}
     {@const RGB = `rgb(${color[0]}, ${color[1]}, ${color[2]})`}
     {@const invertRGB = `rgb(${300 - color[0]}, ${300 - color[1]}, ${300 - color[2]})`}
     {#if char === "*"}

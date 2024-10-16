@@ -91,7 +91,7 @@
     const setBoardIndex = (index: number, select: ValidPattern) => {
         const outOfBounds = index < 0 || index >= renderer.board.length;
         if (select !== "*" && !outOfBounds) {
-            renderer.board[index] = paletteAlias[select]
+            renderer.board[index] = paletteAlias.get(select)!
         }
     }
 

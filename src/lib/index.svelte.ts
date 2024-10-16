@@ -1,13 +1,12 @@
-import type { paletteAlias } from "$lib/constants";
 import type WebGPURenderer from "$lib/render/webgpu";
 import type WebGL2Renderer from "$lib/render/webgl2";
+import type { ValidPattern } from "$lib/constants";
 
 type Node = {
     type: string
     group: boolean
 }
 
-export type ValidPattern = keyof typeof paletteAlias
 export type PatternNode = {
     type: string
 }

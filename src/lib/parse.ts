@@ -1,9 +1,9 @@
-import { type Pattern, type Rule, type ValidPattern } from "$lib/index.svelte";
-import { paletteAlias } from "$lib/constants";
+import { type Pattern, type Rule } from "$lib/index.svelte";
+import { paletteAlias, type ValidPattern } from "$lib/constants";
 
 const isValidPatternString = (pattern: string) => {
     for (const char of pattern) {
-        if (!(char in paletteAlias || char === "*" || char === "/" || char === "~")) {
+        if (!(paletteAlias.has(char as ValidPattern) || char === "*" || char === "/" || char === "~")) {
             return false;
         }
     }
