@@ -1,7 +1,9 @@
 # Collapsibles!
 
-![Screenshot of the website](static/showcase.webp)
+![Screenshot of the website](static/showcase.png)
 
-Name is currently a WIP.
+Name is WIP.
 
-**Temporary website:** 
+There are bugs!
+
+**Temp site:** 
