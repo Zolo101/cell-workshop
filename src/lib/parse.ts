@@ -23,51 +23,33 @@ const buildPattern = (pattern: string): Pattern => {
     if (pattern.length === 1) {
         return {
             type: "Cell",
-            select: pattern as ValidPattern
+            select: paletteAlias.get(pattern as ValidPattern)!
         }
     }
 
     const probablyGridPattern = pattern.includes("/");
     if (probablyGridPattern) {
-        const grid = pattern.split("/").map(row => row.split(""));
+        const grid = pattern
+            .split("/")
+            .map(row => row
+                .split("")
+                .map((cell) => paletteAlias.get(cell as ValidPattern)!)
+            );
         return {
             type: "Grid",
-            select: grid as ValidPattern[][]
+            select: grid
         }
     } else {
+        const sequence = pattern
+            .split("")
+            .map((cell) => paletteAlias.get(cell as ValidPattern)!)
         return {
             type: "Sequence",
-            select: pattern.split("") as ValidPattern[]
+            select: sequence
         }
     }
 }
 
-// const buildPattern = (pattern: ValidPattern[]): Pattern => {
-//     if (pattern.length === 0) {
-//         // TODO: I don't think this is the correct way
-//         return {
-//             type: "Cell",
-//             select: "*"
-//         }
-//     } else if (pattern.length === 1) {
-//         return {
-//             type: "Cell",
-//             select: pattern[0]
-//         }
-//     } else {
-//         return {
-//             type: "Sequence",
-//             select: pattern
-//         }
-//     }
-// }
-
-const buildGridPattern = (grid: ValidPattern[][]): Pattern => {
-    return {
-        type: "Grid",
-        select: grid
-    }
-}
 
 export const lexModel = (model: string): string[] => {
     const fragments = model.split(" ");

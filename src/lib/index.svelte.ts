@@ -1,6 +1,6 @@
 import type WebGPURenderer from "$lib/render/webgpu";
 import type WebGL2Renderer from "$lib/render/webgl2";
-import type { ValidPattern } from "$lib/constants";
+import type { ValidCode, ValidPattern } from "$lib/constants";
 
 type Node = {
     type: string
@@ -11,9 +11,9 @@ export type PatternNode = {
     type: string
 }
 
-type PatternCell = PatternNode & {type: "Cell", select: ValidPattern}
-type PatternSequence = PatternNode & {type: "Sequence", select: ValidPattern[]}
-type PatternGrid = PatternNode & {type: "Grid", select: ValidPattern[][]}
+type PatternCell = PatternNode & {type: "Cell", select: ValidCode}
+type PatternSequence = PatternNode & {type: "Sequence", select: ValidCode[]}
+type PatternGrid = PatternNode & {type: "Grid", select: ValidCode[][]}
 
 export type Pattern = PatternCell | PatternSequence | PatternGrid
 

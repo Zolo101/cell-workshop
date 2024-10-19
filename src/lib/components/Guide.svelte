@@ -18,7 +18,8 @@
     <p>The "Markov" algorithm will attempt to run each rule until one succeeds, skipping the rest.</p>
     <hr>
     <div class="flex flex-col items-center *:w-full *:flex *:*:grow *:*:h-5">
-        <PatternComponent accessibility pattern={{type: "Sequence", select: ["B", "I", "P", "E", "N", "D", "A", "W", "R", "O", "Y", "G", "U", "S", "K", "F", "*"]}}/>
+<!--        TODO: Make this show letters instead-->
+        <PatternComponent accessibility pattern={{type: "Sequence", select: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]}}/>
     </div>
     <hr>
 <!--    TODO: Replace all <b> with <strong> -->

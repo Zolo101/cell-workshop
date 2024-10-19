@@ -2,7 +2,6 @@
     import RuleComponent from "$lib/components/RuleComponent.svelte";
     import {
         type Rule,
-        type ValidPattern,
         type ModelResult,
         type ModelOK,
         type Renderer
@@ -11,8 +10,8 @@
     import Guide from "$lib/components/Guide.svelte";
     import Editor from "$lib/components/Editor.svelte";
     import { lexModel, parseRulesFromTokens } from "$lib/parse";
-    import { palette, paletteAlias } from "$lib/constants";
-    import { isEqualArrays, pick } from "$lib/util";
+    import { palette, type ValidCode } from "$lib/constants";
+    import { pick } from "$lib/util";
     import WebGL2Canvas from "$lib/components/WebGL2Canvas.svelte";
     import RendererSelector from "$lib/cpu/select";
 
@@ -88,10 +87,10 @@
     }
 
     const debug = (chance: number, ...text: unknown[]) => (Math.random() < chance) && console.log(...text)
-    const setBoardIndex = (index: number, select: ValidPattern) => {
+    const setBoardIndex = (index: number, select: ValidCode) => {
         const outOfBounds = index < 0 || index >= renderer.board.length;
-        if (select !== "*" && !outOfBounds) {
-            renderer.board[index] = paletteAlias.get(select)!
+        if (!outOfBounds && select !== 16) {
+            renderer.board[index] = select
         }
     }
 
@@ -113,15 +112,16 @@
                     }
                     return successful;
                 case "Markov":
-                    let anySuccess = false;
-                    for (const child of rule.children) {
-                        const success = traverse(child);
-                        if (success) {
-                            anySuccess = true;
-                            break;
-                        }
-                    }
-                    return anySuccess;
+                    return rule.children.some(traverse);
+                    // let anySuccess = false;
+                    // for (const child of rule.children) {
+                    //     const success = traverse(child);
+                    //     if (success) {
+                    //         anySuccess = true;
+                    //         break;
+                    //     }
+                    // }
+                    // return anySuccess;
             }
         } else {
             let selection;
@@ -290,7 +290,7 @@
             </div>
             <div>
                 <span>Step time:</span>
-                <span class="text-amber-500 font-black">{stepPerformance.toLocaleString()}ms</span>
+                <span class="text-amber-500 font-black">{stepPerformance.toLocaleString(undefined, {minimumFractionDigits: 1})}ms</span>
             </div>
         </section>
         <section class="flex gap-2 text-sm py-2 *:grow *:inline-block *:bg-neutral-800 *:p-2">

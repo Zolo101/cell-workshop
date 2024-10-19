@@ -1,9 +1,9 @@
 import { type PatternNode, type Renderer } from "$lib/index.svelte";
-import { paletteAlias, type ValidPattern } from "$lib/constants";
+import { type ValidCode } from "$lib/constants";
 
-type PatternCell = PatternNode & {type: "Cell", select: ValidPattern}
-type PatternSequence = PatternNode & {type: "Sequence", select: ValidPattern[]}
-type PatternGrid = PatternNode & {type: "Grid", select: ValidPattern[][]}
+type PatternCell = PatternNode & {type: "Cell", select: ValidCode}
+type PatternSequence = PatternNode & {type: "Sequence", select: ValidCode[]}
+type PatternGrid = PatternNode & {type: "Grid", select: ValidCode[][]}
 
 enum Direction {
     Up,
@@ -26,6 +26,11 @@ const rotationOffsets = [
     [[0, 1], [-1, 0]]   // Left
 ];
 
+// TODO: Next step in optimizing would be to do this in WASM
+// Check out https://www.assemblyscript.org/
+// Or try out https://rustwasm.github.io/docs/book/ it might be faster
+// Start by implementing the selector, then the parser.
+// Also, figure out how to talk to the webgl/webgpu2 renderer from WASM? Is this needed? It would remove the cpu overhead...
 export default class RendererSelector {
     renderer: Renderer;
 
@@ -33,8 +38,9 @@ export default class RendererSelector {
         this.renderer = renderer;
     }
 
-    isCellPaletteAlias(cell: number, alias: ValidPattern) {
-        return alias === "*" || cell === paletteAlias.get(alias)
+    isCellPaletteAlias(cell: number, alias: ValidCode) {
+        // return cell >= 0 && cell <= 16;
+        return cell === alias || alias === 16
     }
 
     getIndexesFromLine(start: number, direction: Direction, length: number) {
@@ -61,6 +67,7 @@ export default class RendererSelector {
             for (let j = 0; j < w; j++) {
                 // indexes[index] = this.getIndexOfBoardCoordinate(x + (i * dx1) + (j * dx2), y + (i * dy1) + (j * dy2));
                 indexes[index] = start + (i * dx1) + (j * dx2) + (this.renderer.width * ((i * dy1) + (j * dy2)));
+                // indexes[index] = start + (i * rotationOffsets[rotation][0][0]) + (j * rotationOffsets[rotation][1][0]) + (this.renderer.width * ((i * rotationOffsets[rotation][0][1]) + (j * rotationOffsets[rotation][1][1])));
                 // indexes[index] = start + j + (this.renderer.width * i);
                 index++;
             }
@@ -68,7 +75,7 @@ export default class RendererSelector {
         return indexes;
     }
 
-    isSequenceEqualToArray(sequence: ValidPattern[], indexes: number[]) {
+    isSequenceEqualToArray(sequence: ValidCode[], indexes: number[]) {
         if (sequence.length !== indexes.length) return false;
 
         // Since "*" is a wildcard, we just return true
@@ -86,7 +93,7 @@ export default class RendererSelector {
         // return sequence.every((value, i) => this.isCellPaletteAlias(this.renderer.board[indexes[i]], value))
     }
 
-    isGridEqualToArray(grid: ValidPattern[][], indexes: number[]) {
+    isGridEqualToArray(grid: ValidCode[][], indexes: number[]) {
         // debug(1e-7, "match_2", grid, indexes, grid.length, indexes.length)
         if (grid.length * grid[0].length !== indexes.length) return false;
 
@@ -153,6 +160,7 @@ export default class RendererSelector {
         const gridHeight = pattern.select[0].length;
         for (let i = 0; i < this.renderer.board.length; i++) {
             // const [x, y] = this.getBoardCoordinateFromIndex(i);
+            if (!this.isCellPaletteAlias(this.renderer.board[i], pattern.select[0][0])) continue;
 
             const lineUp = this.getIndexesFromSquare(i, gridWidth, gridHeight, Direction.Up);
             if (this.isGridEqualToArray(pattern.select, lineUp)) indexGrids.push(lineUp);

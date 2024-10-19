@@ -8,8 +8,9 @@ export const palette: RGBA[] = [
 ]
 
 export type ValidPattern = "B" | "I" | "P" | "E" | "N" | "D" | "A" | "W" | "R" | "O" | "Y" | "G" | "U" | "S" | "K" | "F" | "*"
+export type ValidCode = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 | 16
 
-export const paletteAlias = new Map<ValidPattern, number>([
+export const paletteAlias = new Map<ValidPattern, ValidCode>([
     ["B", 0],
     ["I", 1],
     ["P", 2],
@@ -27,4 +28,25 @@ export const paletteAlias = new Map<ValidPattern, number>([
     ["K", 14],
     ["F", 15],
     ["*", 16]
+])
+
+// TODO: Get rid of this soon
+export const reversePaletteAlias = new Map<ValidCode, ValidPattern>([
+    [0, "B"],
+    [1, "I"],
+    [2, "P"],
+    [3, "E"],
+    [4, "N"],
+    [5, "D"],
+    [6, "A"],
+    [7, "W"],
+    [8, "R"],
+    [9, "O"],
+    [10, "Y"],
+    [11, "G"],
+    [12, "U"],
+    [13, "S"],
+    [14, "K"],
+    [15, "F"],
+    [16, "*"]
 ])
