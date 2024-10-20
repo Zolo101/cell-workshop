@@ -7,11 +7,11 @@
     let supportsWebGL2 = $state(true);
     let gl2 = $state<WebGL2RenderingContext | null>();
 
-    $inspect(canvas).with(async (type, c) => {
+    $effect(() => {
         // Not ready yet
-        if (!c) return
+        if (!canvas) return
 
-        gl2 = c.getContext("webgl2");
+        gl2 = canvas.getContext("webgl2");
 
         if (gl2) {
             const renderer = new WebGL2Renderer(gl2)
