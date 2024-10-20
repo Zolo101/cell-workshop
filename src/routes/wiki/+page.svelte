@@ -45,26 +45,26 @@
 </script>
 
 <svelte:head>
-    <title>Collapsibles Wiki!</title>
+    <title>Cell Workshop Wiki</title>
     <link rel="icon" href="wiki/favicon.png"/>
 </svelte:head>
 
 {#snippet info()}
     <section class="text-xs text-neutral-400 text-center">
-        <p>Click on any example to run it</p>
-        <span>0.1.0</span>
+<!--        <p>Click on any example to run it</p>-->
+        <span>alpha 0.1.0</span>
         <span>•</span>
 <!--        <a href="/changelog">Changelog</a>-->
 <!--        <span>•</span>-->
-        <a>Github</a>
+        <a href="https://github.com/Zolo101/unnamed-cellular-automata-project">Source Code</a>
         <span>•</span>
-        <a>Discord</a>
+        <a href="https://discord.gg/YVuuF9KB5j">Discord</a>
     </section>
 {/snippet}
 
 <section class="flex">
-    <section class="w-1/5 h-full bg-neutral-800 p-2">
-        <h1 class="italic">Wiki!</h1>
+    <section class="w-1/5 h-full bg-neutral-800/80 p-2">
+        <h1 class="italic">Wiki</h1>
         {@render info()}
         {#each groups as [name, group]}
             <hr class="mx-2">

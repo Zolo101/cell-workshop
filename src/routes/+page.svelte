@@ -275,7 +275,7 @@
 </dialog>
 <div class="flex max-md:flex-col w-full md:*:w-1/2 gap-2 p-5">
 	<section>
-        <section class="flex justify-center gap-2 font-bold text-neutral-300 *:grow *:bg-neutral-800/40 *:px-2 *:py-1">
+        <section class="flex justify-center gap-2 font-bold text-neutral-300 pb-2 *:grow *:bg-neutral-800/40 *:px-2 *:py-1">
             <div>
                 <span>Size:</span>
 <!--                TODO: 256 is arbitrary, increase it in the future -->
@@ -293,31 +293,31 @@
                 <span class="text-amber-500 font-black">{stepPerformance.toLocaleString(undefined, {minimumFractionDigits: 1})}ms</span>
             </div>
         </section>
-        <section class="flex gap-2 text-sm py-2 *:grow *:inline-block *:bg-neutral-800 *:p-2">
-            <div>
-                <span class="mr-2">Display Mode:</span>
-<!--                <select bind:value={settings.display}>-->
-                <select>
-                    <option value="2d">2D</option>
-                    <option value="3d" disabled>3D (planned)</option>
-                </select>
-            </div>
-            <div>
-                <span class="mr-2">Compute On:</span>
-<!--                <select bind:value={settings.compute}>-->
-                <select>
-                    <option value="cpu">CPU</option>
-                    <option value="gpu" disabled>GPU (planned)</option>
-                </select>
-            </div>
-            <div>
-                <span class="mr-2">API:</span>
-                <select disabled>
-                    <option value="webgl2">WebGL2</option>
-                    <option value="webgpu">WebGPU</option>
-                </select>
-            </div>
-        </section>
+<!--        <section class="flex gap-2 text-sm py-2 *:grow *:inline-block *:bg-neutral-800 *:p-2">-->
+<!--            <div>-->
+<!--                <span class="mr-2">Display Mode:</span>-->
+<!--&lt;!&ndash;                <select bind:value={settings.display}>&ndash;&gt;-->
+<!--                <select>-->
+<!--                    <option value="2d">2D</option>-->
+<!--                    <option value="3d" disabled>3D (planned)</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <span class="mr-2">Compute On:</span>-->
+<!--&lt;!&ndash;                <select bind:value={settings.compute}>&ndash;&gt;-->
+<!--                <select>-->
+<!--                    <option value="cpu">CPU</option>-->
+<!--                    <option value="gpu" disabled>GPU (planned)</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <span class="mr-2">API:</span>-->
+<!--                <select disabled>-->
+<!--                    <option value="webgl2">WebGL2</option>-->
+<!--                    <option value="webgpu">WebGPU</option>-->
+<!--                </select>-->
+<!--            </div>-->
+<!--        </section>-->
         <WebGL2Canvas {init}/>
 <!--        <WebGPUCanvas {init}/>-->
         <section class="flex *:grow m-5 gap-2 justify-around">

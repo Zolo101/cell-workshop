@@ -1,9 +1,7 @@
-# Collapsibles!
+# Cell Workshop
 
 ![Screenshot of the website](static/showcase.png)
 
-Name is WIP.
-
 There are bugs!
 
-**Temp site:** 
+**Temp site:**  https://glistening-bombolone-42394b.netlify.app
