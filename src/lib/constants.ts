@@ -1,5 +1,6 @@
 import type { RGBA } from "$lib/render/webgpu";
 
+export const version = "0.1.0 (WIP)"
 export const palette: RGBA[] = [
     [0, 0, 0, 255], [29, 43, 83, 255], [126, 37, 83, 255], [0, 135, 81, 255],
     [171, 82, 54, 255], [95, 87, 79, 255], [194, 195, 199, 255], [255, 241, 232, 255],

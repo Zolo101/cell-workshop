@@ -98,9 +98,9 @@
     const traverse = (rule: Rule): boolean => {
         if (rule.group) {
             switch (rule.type) {
-                // Difference between Sequence and Markov:
+                // Difference between Sequence and Search:
                 // Sequence: All children are executed no matter what
-                // Markov: If a child found a selection then it is only executed, the rest are ignored
+                // Search: If a child found a selection then it is only executed, the rest are ignored
                 case "Sequence":
                     let successful = true;
                     for (const child of rule.children) {
@@ -111,7 +111,7 @@
                         }
                     }
                     return successful;
-                case "Markov":
+                case "Search":
                     return rule.children.some(traverse);
                     // let anySuccess = false;
                     // for (const child of rule.children) {

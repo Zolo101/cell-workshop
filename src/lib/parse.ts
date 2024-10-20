@@ -92,7 +92,7 @@ export const lexModel = (model: string): string[] => {
 }
 
 type RuleBuilderTree = {
-    type: "Sequence" | "Markov",
+    type: "Sequence" | "Search",
     parent: true
     parts: RuleBuilderNode[],
     startIndex: number
@@ -110,7 +110,7 @@ type RuleBuilderLeaf = {
 
 type RuleBuilderNode = RuleBuilderTree | RuleBuilderLeaf
 
-const buildTokens = (type: "Sequence" | "Markov", tokens: string[], startIndex: number): RuleBuilderNode => {
+const buildTokens = (type: "Sequence" | "Search", tokens: string[], startIndex: number): RuleBuilderNode => {
     const build: RuleBuilderNode = {
         type,
         parent: true,
@@ -125,7 +125,7 @@ const buildTokens = (type: "Sequence" | "Markov", tokens: string[], startIndex: 
         switch (token) {
             case "[":
             case "(":
-                build.parts.push(buildTokens(token === "[" ? "Sequence" : "Markov", tokens, i + 1));
+                build.parts.push(buildTokens(token === "[" ? "Sequence" : "Search", tokens, i + 1));
                 i = build.parts.at(-1)!.endIndex;
                 break;
             case "]":

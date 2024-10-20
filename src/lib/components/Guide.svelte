@@ -15,7 +15,7 @@
     </form>
     <h1>Welcome to the <i>Cell Workshop!</i></h1>
     <p class="text-center mb-2">Algorithms are created from rules, and rules are created from two patterns, an input and output. Each step, the rule's input pattern will look at the screen and collect all regions that match the pattern. It will then replace that region with the output pattern.</p>
-    <p>The "Markov" algorithm will attempt to run each rule until one succeeds, skipping the rest.</p>
+    <p>The "Search" algorithm will attempt to run rules from left to right until one succeeds, then quit.</p>
     <hr>
     <div class="flex flex-col items-center *:w-full *:flex *:*:grow *:*:h-5">
 <!--        TODO: Make this show letters instead-->

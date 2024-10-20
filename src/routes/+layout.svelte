@@ -1,5 +1,6 @@
 <script>
     import "../app.css";
+	import { version } from "$lib/constants";
 </script>
 
 <svelte:head>
@@ -12,11 +13,9 @@
 		<div class="flex md:flex-col text-yellow-400/70">
 			<div class="flex items-end">
 				<h2 class="inline text-3xl font-black italic">Cell Workshop</h2>
-				<span class="text-xs">alpha 0.1.0</span>
+				<span class="text-xs">{version}</span>
 			</div>
 			<span class="text-xl">from <a href="https://zelo.dev">zelo.dev</a></span>
-	<!--		<span class="text-xl">•</span>-->
-	<!--		<span class="text-xl">Github</span>-->
 		</div>
 		<div class="text-sm text-green-500 max-md:hidden">
 			<p>This allows you create pixel art using simple rules. Currently a work in progress, with loads more features to come!</p>

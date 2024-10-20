@@ -2,6 +2,7 @@
     // @ts-ignore
     import indexRaw from "$lib/index.svelte.ts?raw";
     import ExampleRuleComponent from "$lib/components/ExampleRuleComponent.svelte";
+    import { version } from "$lib/constants";
 
     type Section = Partial<Record<string, string>>
     type SectionGroup = Record<string, Section[]>
@@ -52,7 +53,7 @@
 {#snippet info()}
     <section class="text-xs text-neutral-400 text-center">
 <!--        <p>Click on any example to run it</p>-->
-        <span>alpha 0.1.0</span>
+        <span>{version}</span>
         <span>•</span>
 <!--        <a href="/changelog">Changelog</a>-->
 <!--        <span>•</span>-->

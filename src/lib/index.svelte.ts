@@ -60,15 +60,15 @@ type OneSinglet = Singlet & { type: "One" }
 type SequenceGroup = Group & { type: "Sequence" }
 
 /**
- * @title Markov
- * @description Will attempt to run each rule until one succeeds, skipping the rest.
+ * @title Search
+ * @description Will attempt to run rules from left to right until one succeeds, then quit.
  * @since 0.1.0
  * @example (B=W W>R)
  * @group Group
  */
-type MarkovGroup = Group & { type: "Markov" }
+type SearchGroup = Group & { type: "Search" }
 
-export type Rule = AllSinglet | OneSinglet | SequenceGroup | MarkovGroup
+export type Rule = AllSinglet | OneSinglet | SequenceGroup | SearchGroup
 
 export type ModelOK = {
     ok: true

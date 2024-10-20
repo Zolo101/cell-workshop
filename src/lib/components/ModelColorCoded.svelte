@@ -11,7 +11,7 @@
     }
 
     const styles: Record<string, Partial<CSSStyleDeclaration>> = {
-        "markov": {color: "#ffffff", fontWeight: "bold", position: "relative", top: "-1px"},
+        "search": {color: "#ffffff", fontWeight: "bold", position: "relative", top: "-1px"},
         "sequence": {color: "#ff7b00", fontWeight: "bold", position: "relative", top: "-1px"},
         "one": {color: "#b3b3b3"},//, fontWeight: "bold"},
         "all": {color: "cyan"},//, fontWeight: "bold"},
@@ -124,7 +124,7 @@
                     break;
                 case "(":
                 case ")":
-                    tokens.push(createToken("markov", part))
+                    tokens.push(createToken("search", part))
                     break;
                 case ">":
                     tokens.push(createToken("all", part))
