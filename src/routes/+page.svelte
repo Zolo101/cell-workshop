@@ -102,12 +102,12 @@
                 // Sequence: All children are executed no matter what
                 // Search: If a child found a selection then it is only executed, the rest are ignored
                 case "Sequence":
-                    let successful = true;
+                    let successful = false;
                     for (const child of rule.children) {
                         // TODO: We cant shorthand "&&=" this for some reason..?
                         let success = traverse(child);
-                        if (success === false) {
-                            successful = false;
+                        if (success === true) {
+                            successful = true;
                         }
                     }
                     return successful;

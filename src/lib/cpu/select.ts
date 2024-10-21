@@ -33,9 +33,11 @@ const rotationOffsets = [
 // Also, figure out how to talk to the webgl/webgpu2 renderer from WASM? Is this needed? It would remove the cpu overhead...
 export default class RendererSelector {
     renderer: Renderer;
+    buffer: Uint32Array
 
     constructor(renderer: Renderer) {
         this.renderer = renderer;
+        this.buffer = new Uint32Array(renderer.width * renderer.height);
     }
 
     isCellPaletteAlias(cell: number, alias: ValidCode) {
@@ -43,6 +45,7 @@ export default class RendererSelector {
         return cell === alias || alias === 16
     }
 
+    // TODO: Use this.buffer to avoid creating new arrays
     getIndexesFromLine(start: number, direction: Direction, length: number) {
         const indexes = new Array(length);
         const [dx, dy] = directionOffsets[direction];
@@ -58,6 +61,7 @@ export default class RendererSelector {
         return indexes;
     }
 
+    // TODO: Use this.buffer to avoid creating new arrays
     getIndexesFromSquare(start: number, w: number, h: number, rotation: Direction) {
         const indexes = new Array(w * h);
         const [[dx1, dy1], [dx2, dy2]] = rotationOffsets[rotation];
@@ -117,7 +121,9 @@ export default class RendererSelector {
         //         .every((value, j) => this.isCellPaletteAlias(this.renderer.board[indexes[i * grid.length + j]], value)));
     }
 
+    // TODO: Use this.buffer to avoid creating new arrays
     selectWithCell(pattern: PatternCell): number[] {
+        // this.buffer.fill(-1);
         const indexes = [];
 
         for (let i = 0; i < this.renderer.board.length; i++) {
@@ -127,9 +133,13 @@ export default class RendererSelector {
             }
         }
 
+        // return this.buffer;
+
         return indexes;
     }
 
+    // TODO: Use this.buffer to avoid creating new arrays
+    // TODO: We don't need to get every index, just the first one
     selectWithSequence(pattern: PatternSequence, omnidirectional: boolean): number[][] {
         const indexSequences: number[][] = [];
         const sequenceLength = pattern.select.length;
@@ -154,6 +164,8 @@ export default class RendererSelector {
         return indexSequences;
     }
 
+    // TODO: Use this.buffer to avoid creating new arrays
+    // TODO: We don't need to get every index, just the first one
     selectWithGrid(pattern: PatternGrid, omnidirectional: boolean): number[][] {
         const indexGrids: number[][] = [];
         const gridWidth = pattern.select.length;
