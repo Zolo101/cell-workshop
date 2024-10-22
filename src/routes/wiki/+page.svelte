@@ -53,18 +53,13 @@
 {#snippet info()}
     <section class="text-xs text-neutral-400 text-center">
 <!--        <p>Click on any example to run it</p>-->
-        <span>{version}</span>
-        <span>•</span>
-<!--        <a href="/changelog">Changelog</a>-->
 <!--        <span>•</span>-->
-        <a href="https://github.com/Zolo101/unnamed-cellular-automata-project">Source Code</a>
-        <span>•</span>
-        <a href="https://discord.gg/YVuuF9KB5j">Discord</a>
+<!--        <a href="/changelog">Changelog</a>-->
     </section>
 {/snippet}
 
 <section class="flex">
-    <section class="w-1/5 h-full bg-neutral-800/80 p-2">
+    <section class="w-1/5 sticky top-0 h-full bg-neutral-800/80 p-2">
         <h1 class="italic">Wiki</h1>
         {@render info()}
         {#each groups as [name, group]}
