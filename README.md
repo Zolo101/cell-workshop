@@ -1,7 +1,3 @@
-# Cell Workshop
-
+![Cell Workshop](static/embed.webp)
+# https://zelo.dev/cell-workshop/
 ![Screenshot of the website](static/showcase.png)
-
-There are major bugs!
-
-**Temp site:**  https://glistening-bombolone-42394b.netlify.app
