@@ -47,14 +47,14 @@
 
 <svelte:head>
     <title>Cell Workshop Wiki</title>
-    <link rel="icon" href="wiki/favicon.png"/>
+    <link rel="icon" href="./wiki/favicon.png"/>
 </svelte:head>
 
 {#snippet info()}
     <section class="text-xs text-neutral-400 text-center">
 <!--        <p>Click on any example to run it</p>-->
 <!--        <span>•</span>-->
-<!--        <a href="/changelog">Changelog</a>-->
+<!--        <a href="./changelog">Changelog</a>-->
     </section>
 {/snippet}
 
@@ -64,24 +64,24 @@
         {@render info()}
         {#each groups as [name, group]}
             <hr class="mx-2">
-            <h3 class="ml-3"><a href="/wiki/#{name}">> {name}</a></h3>
+            <h3 class="ml-3"><a href="./wiki/#{name}">> {name}</a></h3>
             {#each group as section}
                 {#if section.since}
-                    <p class="ml-10"><a class="font-normal" href="/wiki/#{section.title}">{section.title}</a></p>
+                    <p class="ml-10"><a class="font-normal" href="./wiki/#{section.title}">{section.title}</a></p>
                 {/if}
             {/each}
         {/each}
     </section>
     <section class="w-4/5 p-5">
         {#each groups as [name, group]}
-            <h1 id="name"><a class="font-black" href="/wiki/#{name}">{name}</a></h1>
+            <h1 id="name"><a class="font-black" href="./wiki/#{name}">{name}</a></h1>
             <div class="flex flex-col gap-8">
                 {#each group as section}
                     <!-- TODO: Implement section.todo-->
                     {#if section.since}
                         <section class="bg-gray-950/30 rounded p-3">
                             <div class="flex">
-                                <h2 id={section.title} class="text-left"><a href="/wiki/#{section.title}">{section.title}</a></h2>
+                                <h2 id={section.title} class="text-left"><a href="./wiki/#{section.title}">{section.title}</a></h2>
                                 <span class="text-xs">{section.since}</span>
                             </div>
                             <p class="text-neutral-300">{section.description}</p>

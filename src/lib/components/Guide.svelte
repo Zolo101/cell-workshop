@@ -71,7 +71,7 @@
         <p>(TODO: REPLACE TEXT)</p>
     </div>
     <hr>
-    <p class="text-center">For more info, check out the <a href="/wiki">wiki!</a> You can also click on text in any rule visualiser for more information.</p>
+    <p class="text-center">For more info, check out the <a href="./wiki/">wiki!</a> You can also click on text in any rule visualiser for more information.</p>
     <form method="dialog" class="flex justify-center m-2">
         <button>Let's Start!</button>
     </form>

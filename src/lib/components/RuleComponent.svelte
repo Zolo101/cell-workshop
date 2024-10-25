@@ -6,7 +6,7 @@
 </script>
 
 {#snippet wiki(id)}
-    <a class="font-normal" href="/wiki#{id}">{id}</a>
+    <a class="font-normal" href="./wiki#{id}">{id}</a>
 {/snippet}
 
 {#if rule}
