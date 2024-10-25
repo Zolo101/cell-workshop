@@ -275,7 +275,7 @@
 </dialog>
 <div class="flex max-md:flex-col w-full md:*:w-1/2 gap-2 p-5">
 	<section>
-        <section class="flex justify-center gap-2 font-bold text-neutral-300 pb-2 *:grow *:bg-neutral-800/40 *:px-2 *:py-1">
+        <section class="flex justify-center gap-2 font-bold text-neutral-300 pb-2 *:w-full *:bg-neutral-800/40 *:px-2 *:py-1">
             <div>
                 <span>Size:</span>
 <!--                TODO: 256 is arbitrary, increase it in the future -->
@@ -290,7 +290,7 @@
             </div>
             <div>
                 <span>Step time:</span>
-                <span class="text-amber-500 font-black">{stepPerformance.toLocaleString(undefined, {minimumFractionDigits: 1})}ms</span>
+                <span class="text-amber-500 font-black">{stepPerformance.toLocaleString(undefined, {minimumFractionDigits: 3})}ms</span>
             </div>
         </section>
 <!--        <section class="flex gap-2 text-sm py-2 *:grow *:inline-block *:bg-neutral-800 *:p-2">-->
